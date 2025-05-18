@@ -7,6 +7,8 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 - 🌐 Frontend web en **React.js**
 - 📱 App móvil en **Android Studio** con **XML Views**
 
+![Arquitectura del sistema](https://raw.githubusercontent.com/Joscalion04/Banner-App/main/Arquitectura_Banner.png)
+
 ---
 
 ## 🧠 Backend - API Kotlin + Spring Boot
