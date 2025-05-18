@@ -20,8 +20,6 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 - Kotlin
 - Spring Boot (Web, Security, JDBC)
 
-📂 Ver más: [`/lab4/README.md`](./lab4/README.md)
-
 ---
 
 ## 🗄️ Base de Datos - Oracle XE
@@ -34,23 +32,19 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 
 **Esquema principal**: `MOVILES`
 
-📂 Ver más: [`/database/README.md`](./database/README.md)
-
 ---
 
 ## 🌐 Frontend Web - React.js
 
 - Aplicación SPA para uso en escritorio y dispositivos móviles.
-- Consume la API para mostrar datos del estudiante, perfil, matrícula y dashboard.
-- Diseño responsive.
+- Consume la API para mostrar datos del estudiante, perfil, matrícula y dashboards personalizados.
+- Permite registro, login, matrícula, consulta de cursos y más
 
 **Tecnologías**:
 - React.js
 - React Router
 - CSS Modules
 - Fetch API
-
-📂 Ver más: [`/frontend-web/README.md`](./frontend-web/README.md)
 
 ---
 
@@ -59,13 +53,11 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 - App nativa en Android Studio
 - Interfaz diseñada con **XML Views**
 - Conectada directamente a la API
-- Permite autenticación, matrícula, consulta de cursos y más
+- Permite registro, login, matrícula, consulta de cursos y más
 
 **Tecnologías**:
-- Java/Kotlin (según implementación)
+- Kotlin
 - Retrofit2
 - XML + Navigation Components
-
-📂 Ver más: [`/mobile-android/README.md`](./mobile-android/README.md)
 
 ---
