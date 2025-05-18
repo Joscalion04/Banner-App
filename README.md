@@ -20,7 +20,7 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 - Kotlin
 - Spring Boot (Web, Security, JDBC)
 
-📂 Ver más: [`/backend/README.md`](./backend/README.md)
+📂 Ver más: [`/lab4/README.md`](./lab4/README.md)
 
 ---
 
