@@ -19,8 +19,6 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 **Tecnologías**:
 - Kotlin
 - Spring Boot (Web, Security, JDBC)
-- JPA/Hibernate opcional
-- JWT o manejo propio de sesión
 
 📂 Ver más: [`/backend/README.md`](./backend/README.md)
 
@@ -30,7 +28,7 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 
 - Todas las tablas relacionadas con alumnos, carreras, cursos, matrícula, etc.
 - Contiene:
-  - **Procedimientos** (`PROCEDURE`) para procesos como matrícula, desmatrícula, registro.
+  - **Procedimientos** (`PROCEDURE`) para procesos como matrícula, desmatrícula, registro, [CRUDS].
   - **Funciones** (`FUNCTION`) para cálculos de promedio, validaciones, etc.
   - **Manejo de errores** desde procedimientos (uso de `EXCEPTION` Oracle).
 
