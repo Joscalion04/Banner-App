@@ -1,10 +1,7 @@
-// src/components/Login.js
-
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../styles/App.module.css';
-import { realLoginAPI } from '../api/auth';
-
+import { realLoginAPI } from './auth';
 
 const Login = ({ onLogin }) => {
     const [cedula, setCedula] = useState('');
@@ -15,19 +12,35 @@ const Login = ({ onLogin }) => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         setError('');
+        
         try {
-            const data = await realLoginAPI(cedula, clave);
-            onLogin(data);
+            const userData = await realLoginAPI(cedula, clave);
+            
+            // Asegúrate que tu API devuelva estos campos
+            if (!userData || !userData.tipoUsuario) {
+                throw new Error('Datos de usuario inválidos');
+            }
+            
+            // Guarda los datos del usuario en el estado de App
+            onLogin({
+                cedula: userData.cedula,
+                nombre: userData.nombre,
+                tipoUsuario: userData.tipoUsuario
+                // Agrega otros campos necesarios
+            });
 
-            if (data.tipoUsuario === 'ALUMNO') {
+            // Redirección basada en el tipo de usuario
+            if (userData.tipoUsuario === 'ALUMNO') {
                 navigate('/alumno');
-            } else if (data.tipoUsuario === 'PROFESOR') {
+            } else if (userData.tipoUsuario === 'PROFESOR') {
                 navigate('/profesor');
             } else {
-                throw new Error('Tipo de usuario desconocido');
+                throw new Error('Tipo de usuario no reconocido');
             }
+            
         } catch (err) {
-            setError(err.message);
+            setError(err.message || 'Error al iniciar sesión');
+            console.error('Error en login:', err);
         }
     };
 
