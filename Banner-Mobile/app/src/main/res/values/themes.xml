@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <style name="Theme.Quiz" parent="Theme.AppCompat.Light.DarkActionBar">
-        <!-- Configuración adicional de tu tema -->
-    </style>
-</resources>

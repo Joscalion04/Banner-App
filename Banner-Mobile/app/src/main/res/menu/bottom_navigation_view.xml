@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<menu xmlns:android="http://schemas.android.com/apk/res/android">
-    <item android:id="@+id/nav_home" android:title="Inicio" android:icon="@drawable/home"/>
-    <item android:id="@+id/nav_profile" android:title="Perfil" android:icon="@drawable/icon_account_logo"/>
-    <item android:id="@+id/nav_settings" android:title="Configuración" android:icon="@drawable/settings"/>
-    <item android:id="@+id/nav_logout" android:title="Cerrar Sesión" android:icon="@drawable/logout"/>
-</menu>
