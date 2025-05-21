@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    tools:ignore="HardcodedText">
+
+    <item
+        android:id="@+id/cursos"
+        android:title="Cursos" />
+
+    <item
+        android:id="@+id/carreras"
+        android:title="Carreras" />
+
+    <item
+        android:id="@+id/profesores"
+        android:title="Profesores" />
+
+    <item
+        android:id="@+id/alumnos"
+        android:title="Alumnos" />
+
+    <item
+        android:id="@+id/ciclos"
+        android:title="Ciclos" />
+
+    <item
+        android:id="@+id/oferta"
+        android:title="Oferta Académica" />
+
+    <item
+        android:id="@+id/matricula"
+        android:title="Matricula" />
+
+    <item
+        android:id="@+id/notas"
+        android:title="Notas" />
+
+    <item
+        android:id="@+id/historial"
+        android:title="Historial" />
+
+    <item
+        android:id="@+id/seguridad"
+        android:title="Seguridad" />
+
+    <item
+        android:id="@+id/nav_logout"
+        android:title="Logout" />
+
+</menu>

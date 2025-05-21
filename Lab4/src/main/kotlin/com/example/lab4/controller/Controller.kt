@@ -98,7 +98,7 @@ class Controller {
         }
     }
 
-    @GetMapping("/obtenerCurso")
+    @GetMapping("/obtenerCursos")
     fun obtenerCursos(): Collection<Curso> {
         try {
             return service.obtenerCursos()

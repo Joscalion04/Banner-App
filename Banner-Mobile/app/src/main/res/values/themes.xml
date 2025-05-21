@@ -1,9 +1,6 @@
-<resources xmlns:tools="http://schemas.android.com/tools">
-    <!-- Base application theme. -->
-    <style name="Base.Theme.SistemaMatricula" parent="Theme.Material3.DayNight.NoActionBar">
-        <!-- Customize your light theme here. -->
-        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <style name="Theme.Quiz" parent="Theme.AppCompat.Light.DarkActionBar">
+        <!-- Configuración adicional de tu tema -->
     </style>
-
-    <style name="Theme.SistemaMatricula" parent="Base.Theme.SistemaMatricula" />
 </resources>

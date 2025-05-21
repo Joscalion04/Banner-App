@@ -1,0 +1,45 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="375dp"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <EditText
+            android:id="@+id/etCedulaProfesor"
+            android:layout_width="375dp"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/cedulaProfesor"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etNombreProfesor"
+            android:layout_width="375dp"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/nombreProfesor"
+            android:inputType="text" />
+
+        <EditText
+            android:id="@+id/etTelefono"
+            android:layout_width="375dp"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/telefonoProfesor"
+            android:inputType="phone" />
+
+        <EditText
+            android:id="@+id/etEmail"
+            android:layout_width="375dp"
+            android:layout_height="48dp"
+            android:autofillHints=""
+            android:hint="@string/emailProfesor"
+            android:inputType="textEmailAddress" />
+
+    </LinearLayout>
+</ScrollView>

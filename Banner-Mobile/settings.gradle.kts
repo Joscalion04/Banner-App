@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SistemaMatricula"
+rootProject.name = "Quiz"
 include(":app")
  
