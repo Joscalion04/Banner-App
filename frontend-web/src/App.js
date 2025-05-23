@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react';
 import Login from './components/login/Login';
 import AlumnoDashboard from './components/dashboard/alumnoDash/AlumnoDashboard';
 import ProfesorDashboard from './components/dashboard/profesorDash/ProfesorDashboard';
+import AdminDashboard from './components/dashboard/administradorDash/AdminDashboard';
 
 function App() {
     const [user, setUser] = useState(() => {
@@ -20,30 +21,49 @@ function App() {
         }
     }, [user]);
 
+    // Función de logout centralizada
+    const handleLogout = () => {
+        setUser(null);
+        localStorage.removeItem('user');
+        // Aquí podrías agregar limpieza de otros estados si es necesario
+    };
+
     return (
         <Router>
             <Routes>
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route 
-                    path="/login" 
+                   path="/login" 
                     element={user ? (
-                        <Navigate to={user.tipoUsuario === 'ALUMNO' ? '/alumno' : '/profesor'} replace />
+                        <Navigate to={
+                            user.tipoUsuario === 'ALUMNO' ? '/alumno' : 
+                            user.tipoUsuario === 'PROFESOR' ? '/profesor' : 
+                            '/administrador'
+                        } replace />
                     ) : (
                         <Login onLogin={setUser} />
                     )} 
                 />
-                <Route 
+                 <Route 
                     path="/alumno" 
                     element={user && user.tipoUsuario === 'ALUMNO' ? (
-                        <AlumnoDashboard user={user} />
+                        <AlumnoDashboard user={user} onLogout={() => setUser(null)} />
+                    ) : (
+                        <Navigate to="/login" replace />
+                    )}
+                    />
+                <Route 
+                    path="/profesor" 
+                    element={user && user.tipoUsuario === 'PROFESOR' ? (
+                        <ProfesorDashboard user={user} />
                     ) : (
                         <Navigate to="/login" replace />
                     )}
                 />
                 <Route 
-                    path="/profesor" 
-                    element={user && user.tipoUsuario === 'PROFESOR' ? (
-                        <ProfesorDashboard user={user} />
+                    path="/administrador" 
+                    element={user && user.tipoUsuario === 'ADMINISTRADOR' ? (
+                        <AdminDashboard user={user} onLogout={handleLogout} />
                     ) : (
                         <Navigate to="/login" replace />
                     )}

@@ -12,7 +12,7 @@ import {
     cargarCursosDisponibles 
 } from './alumnoApi';
 
-const AlumnoDashboard = ({ user }) => {
+const AlumnoDashboard = ({ user , onLogout }) => {
     const [activeTab, setActiveTab] = useState('cursos');
     const [matriculas, setMatriculas] = useState([]);
     const [perfil, setPerfil] = useState(null);
@@ -72,8 +72,8 @@ const AlumnoDashboard = ({ user }) => {
                 setActiveTab={setActiveTab}
                 perfil={perfil}
                 user={user}
+                onLogout={onLogout}
             />
-            
             <main className={styles.mainContent}>
                 <header className={styles.header}>
                     <h1>Bienvenido, {perfil ? perfil.nombre : user.cedula}</h1>

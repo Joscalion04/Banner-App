@@ -3,10 +3,10 @@ import React from 'react';
 import styles from '../../../styles/App.module.css';
 import UserProfile from './UserProfile';
 
-const Sidebar = ({ activeTab, setActiveTab, perfil, user }) => {
+const Sidebar = ({ activeTab, setActiveTab, perfil, user, onLogout }) => {
     return (
         <aside className={styles.sidebar}>
-            <UserProfile perfil={perfil} user={user} />
+            <UserProfile perfil={perfil} user={user} onLogout={onLogout} />
             
             <ul className={styles.navMenu}>
                 <li 
