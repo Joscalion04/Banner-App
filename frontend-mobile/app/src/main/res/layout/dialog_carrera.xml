@@ -4,34 +4,34 @@
     android:layout_height="wrap_content">
 
     <LinearLayout
-        android:layout_width="match_parent"
+        android:layout_width="340dp"
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:padding="16dp">
 
         <EditText
-            android:id="@+id/etNombreCurso"
+            android:id="@+id/etCodigoCarrera"
             android:layout_width="340dp"
             android:layout_height="48dp"
             android:autofillHints=""
-            android:hint="@string/nombre_curso"
+            android:hint="@string/c_digo_de_la_carrera"
             android:inputType="text" />
 
         <EditText
-            android:id="@+id/etCreditos"
+            android:id="@+id/etNombreCarrera"
             android:layout_width="340dp"
             android:layout_height="48dp"
             android:autofillHints=""
-            android:hint="@string/cr_ditos"
-            android:inputType="number" />
+            android:hint="@string/nombre_de_la_carrera"
+            android:inputType="text" />
 
         <EditText
-            android:id="@+id/etHorasSemanales"
+            android:id="@+id/etTituloCarrera"
             android:layout_width="340dp"
             android:layout_height="48dp"
             android:autofillHints=""
-            android:hint="@string/horas_semanales"
-            android:inputType="number" />
+            android:hint="@string/t_tulo_de_la_carrera"
+            android:inputType="text" />
 
     </LinearLayout>
 </ScrollView>

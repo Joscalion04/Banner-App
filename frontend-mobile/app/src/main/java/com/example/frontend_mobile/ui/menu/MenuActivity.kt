@@ -10,6 +10,10 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.example.frontend_mobile.R
+import com.example.frontend_mobile.data.LoginDataSource
+import com.example.frontend_mobile.data.SessionManager
+import com.example.frontend_mobile.data.repository.LoginRepository
+import com.example.frontend_mobile.ui.carreras.CarreraFragment
 import com.example.frontend_mobile.ui.cursos.CursoFragment
 import com.example.frontend_mobile.ui.login.LoginActivity
 import com.example.frontend_mobile.ui.profesores.ProfesorFragment
@@ -29,6 +33,26 @@ class MenuActivity : AppCompatActivity() {
         actionBarDrawerToggle.syncState()
 
         navigationView = findViewById(R.id.nav_view)
+
+        val menu = navigationView.menu
+        val tipoUsuario: String? = SessionManager.user?.tipoUsuario
+
+        val todosLosItems = listOf(
+            R.id.cursos, R.id.carreras, R.id.profesores, R.id.alumnos,
+            R.id.ciclos, R.id.oferta, R.id.matricula, R.id.notas,
+            R.id.historial, R.id.seguridad
+        )
+
+        val itemsVisibles = mapOf(
+            "ADMINISTRADOR" to todosLosItems - R.id.notas,
+            "MATRICULADOR" to listOf(R.id.alumnos),
+            "PROFESOR" to listOf(R.id.notas),
+            "ALUMNO" to listOf(R.id.historial)
+        )[tipoUsuario] ?: emptyList()
+
+        todosLosItems.forEach { id ->
+            menu.findItem(id)?.isVisible = id in itemsVisibles
+        }
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
@@ -54,6 +78,12 @@ class MenuActivity : AppCompatActivity() {
                 R.id.profesores -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, ProfesorFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+                R.id.carreras -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, CarreraFragment())
                         .addToBackStack(null)
                         .commit()
                 }

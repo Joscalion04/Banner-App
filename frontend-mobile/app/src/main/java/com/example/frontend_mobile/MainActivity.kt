@@ -11,21 +11,21 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Verifica si el usuario ya inició sesión (puedes usar SharedPreferences)
-        val isLoggedIn = checkUserLogin()
-
-        if (!isLoggedIn) {
+//        // Verifica si el usuario ya inició sesión (puedes usar SharedPreferences)
+//        val isLoggedIn = checkUserLogin()
+//
+//        if (!isLoggedIn) {
             // Si no ha iniciado sesión, redirigir a LoginActivity
             val intent = Intent(this, LoginActivity::class.java)
             startActivity(intent)
             finish() // Evita que el usuario regrese con el botón atrás
             return
-        }
-
-        val intent = Intent(this, MenuActivity::class.java)
-        startActivity(intent)
-        finish() // Evita que el usuario regrese con el botón atrás
-        return
+//        }
+//
+//        val intent = Intent(this, MenuActivity::class.java)
+//        startActivity(intent)
+//        finish() // Evita que el usuario regrese con el botón atrás
+//        return
     }
 
     private fun checkUserLogin(): Boolean {

@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.data.model.Profesor
 import com.example.frontend_mobile.data.repository.ProfesorRepository
 import com.example.frontend_mobile.databinding.DialogProfesorBinding
@@ -42,6 +43,14 @@ class ProfesorFragment : Fragment(), ProfesorAdapter.OnProfesorClickListener {
         binding.recyclerViewProfesores.adapter = adapter
 
         cargarProfesores()
+
+        WebSocketManager.conectar { tipo, evento, id ->
+            if (tipo == "profesor" && (evento == "insertar" || evento == "actualizar" || evento == "eliminar")) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    cargarProfesores()
+                }
+            }
+        }
 
         binding.searchViewProfesores.setOnQueryTextListener(object :
             SearchView.OnQueryTextListener {

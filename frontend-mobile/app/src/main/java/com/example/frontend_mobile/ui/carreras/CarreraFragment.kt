@@ -1,64 +1,66 @@
-package com.example.frontend_mobile.ui.cursos
+package com.example.frontend_mobile.ui.carreras
 
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.SearchView
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import android.widget.SearchView
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.WebSocketManager
-import com.example.frontend_mobile.data.model.Curso
-import com.example.frontend_mobile.data.repository.CursoRepository
-import com.example.frontend_mobile.databinding.DialogCursoBinding
-import com.example.frontend_mobile.databinding.FragmentCursosBinding
+import com.example.frontend_mobile.data.model.Carrera
+import com.example.frontend_mobile.data.repository.CarreraRepository
+import com.example.frontend_mobile.databinding.DialogCarreraBinding
+import com.example.frontend_mobile.databinding.FragmentCarrerasBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 
-class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
+class CarreraFragment : Fragment(), CarreraAdapter.OnCarreraClickListener {
 
-    private lateinit var binding: FragmentCursosBinding
-    private val cursoRepository = CursoRepository;
-    private lateinit var adapter: CursoAdapter
+    private lateinit var binding: FragmentCarrerasBinding
+    private val carreraRepository = CarreraRepository
+    private lateinit var adapter: CarreraAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        binding = FragmentCursosBinding.inflate(inflater, container, false)
+        binding = FragmentCarrerasBinding.inflate(inflater, container, false)
         return binding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = CursoAdapter(mutableListOf(), this, cursoRepository)
-        binding.recyclerViewCursos.layoutManager = LinearLayoutManager(requireContext())
-        binding.recyclerViewCursos.adapter = adapter
+        adapter = CarreraAdapter(mutableListOf(), this, carreraRepository)
+        binding.recyclerViewCarreras.layoutManager = LinearLayoutManager(requireContext())
+        binding.recyclerViewCarreras.adapter = adapter
 
-        cargarCursos()
+        cargarCarreras()
 
         WebSocketManager.conectar { tipo, evento, id ->
-            if (tipo == "curso" && (evento == "insertar" || evento == "actualizar" || evento == "eliminar")) {
+            if (tipo == "carrera" && (evento == "insertar" || evento == "actualizar" || evento == "eliminar")) {
                 lifecycleScope.launch(Dispatchers.Main) {
-                    cargarCursos()
+                    cargarCarreras()
                 }
             }
         }
 
-        binding.searchViewCursos.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
-            override fun onQueryTextSubmit(query: String?) = true.also { filtrarCursos(query) }
-            override fun onQueryTextChange(newText: String?) = true.also { filtrarCursos(newText) }
+        binding.searchViewCarreras.setOnQueryTextListener(object :
+            SearchView.OnQueryTextListener {
+            override fun onQueryTextSubmit(query: String?) = true.also { filtrarCarreras(query) }
+            override fun onQueryTextChange(newText: String?) =
+                true.also { filtrarCarreras(newText) }
         })
 
-        binding.fabAgregarCurso.setOnClickListener {
-            mostrarDialogCurso(null)
+        binding.fabAgregarCarrera.setOnClickListener {
+            mostrarDialogCarrera(null)
         }
 
         val touchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
@@ -73,26 +75,26 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
 
             override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
                 val pos = viewHolder.adapterPosition
-                val curso = adapter.cursos[pos]
+                val carrera = adapter.listaCarreras[pos]
 
                 when (direction) {
                     ItemTouchHelper.LEFT -> {
                         AlertDialog.Builder(requireContext())
-                            .setTitle("Eliminar curso")
-                            .setMessage("¿Eliminar ${curso.nombre}?")
+                            .setTitle("Eliminar carrera")
+                            .setMessage("¿Eliminar ${carrera.nombre}?")
                             .setPositiveButton("Sí") { _, _ ->
                                 lifecycleScope.launch {
-                                    val exito = adapter.eliminarCurso(pos)
+                                    val exito = adapter.eliminarCarrera(pos)
                                     if (exito) {
                                         Toast.makeText(
                                             requireContext(),
-                                            "Curso eliminado",
+                                            "Carrera eliminada",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                     } else {
                                         Toast.makeText(
                                             requireContext(),
-                                            "Error al eliminar curso",
+                                            "Error al eliminar la carrera",
                                             Toast.LENGTH_SHORT
                                         ).show()
                                         adapter.notifyItemChanged(pos) // para "revertir" swipe visualmente
@@ -107,93 +109,93 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
 
                     ItemTouchHelper.RIGHT -> {
                         adapter.notifyItemChanged(pos)
-                        mostrarDialogCurso(curso)
+                        mostrarDialogCarrera(carrera)
                     }
                 }
             }
         })
-        touchHelper.attachToRecyclerView(binding.recyclerViewCursos)
+        touchHelper.attachToRecyclerView(binding.recyclerViewCarreras)
     }
 
-    private fun cargarCursos() {
+    private fun cargarCarreras() {
         lifecycleScope.launch {
-            val cursosRemotos = cursoRepository.listarCursos() // suspende y espera la respuesta
-            adapter.actualizarLista(cursosRemotos.toMutableList())
+            val carrerasRemotos =
+                carreraRepository.listarCarreras() // suspende y espera la respuesta
+            adapter.actualizarLista(carrerasRemotos.toMutableList())
         }
     }
 
-    private fun filtrarCursos(query: String?) {
+    private fun filtrarCarreras(query: String?) {
         lifecycleScope.launch {
-            val cursos = cursoRepository.listarCursos()
+            val carreras = carreraRepository.listarCarreras()
             val resultados = if (!query.isNullOrBlank()) {
-                cursos.filter {
+                carreras.filter {
                     it.nombre.contains(query, true) ||
-                            it.codigoCurso.contains(query, true)
+                            it.codigoCarrera.contains(query, true)
                 }
             } else {
-                cursos
+                carreras
             }
             adapter.actualizarLista(resultados.toMutableList())
         }
     }
 
-    override fun onCursoClick(curso: Curso) {
-        mostrarDialogCurso(curso)
+    override fun onCarreraClick(carrera: Carrera) {
+        mostrarDialogCarrera(carrera)
     }
 
-    override fun onCursoLongClick(curso: Curso): Boolean {
+    override fun onCarreraLongClick(carrera: Carrera): Boolean {
         AlertDialog.Builder(requireContext())
-            .setTitle("Eliminar curso")
-            .setMessage("¿Estás seguro de eliminar el curso ${curso.nombre}?")
+            .setTitle("Eliminar carrera")
+            .setMessage("¿Estás seguro de eliminar la carrera ${carrera.nombre}?")
             .setPositiveButton("Eliminar") { _, _ ->
-                eliminarCurso(curso)
+                eliminarCarrera(carrera)
             }
             .setNegativeButton("Cancelar", null)
             .show()
         return true
     }
 
-    private fun eliminarCurso(curso: Curso) {
+    private fun eliminarCarrera(carrera: Carrera) {
         lifecycleScope.launch {
-            val cursos = cursoRepository.listarCursos().toMutableList()
-            cursos.remove(curso)
-            adapter.actualizarLista(cursos)
+            val carreras = carreraRepository.listarCarreras().toMutableList()
+            carreras.remove(carrera)
+            adapter.actualizarLista(carreras)
             withContext(Dispatchers.Main) {
-                Toast.makeText(requireContext(), "Curso eliminado", Toast.LENGTH_SHORT).show()
+                Toast.makeText(requireContext(), "Carrera eliminada", Toast.LENGTH_SHORT).show()
             }
         }
     }
 
-    private fun mostrarDialogCurso(curso: Curso?) {
-        val dialogBinding = DialogCursoBinding.inflate(layoutInflater)
-        curso?.let {
-            dialogBinding.etNombreCurso.setText(it.nombre)
-            dialogBinding.etCreditos.setText(it.creditos.toString())
-            dialogBinding.etHorasSemanales.setText(it.horasSemanales.toString())
+    private fun mostrarDialogCarrera(carrera: Carrera?) {
+        val dialogBinding = DialogCarreraBinding.inflate(layoutInflater)
+        carrera.let {
+            dialogBinding.etCodigoCarrera.setText(it?.codigoCarrera)
+            dialogBinding.etNombreCarrera.setText(it?.nombre)
+            dialogBinding.etTituloCarrera.setText(it?.titulo)
         }
 
         AlertDialog.Builder(requireContext())
-            .setTitle(if (curso == null) "Agregar Curso" else "Editar Curso")
+            .setTitle(if (carrera == null) "Agregar Carrera" else "Editar Carrera")
             .setView(dialogBinding.root)
             .setPositiveButton("Guardar") { _, _ ->
-                val nombre = dialogBinding.etNombreCurso.text.toString()
-                val creditos = dialogBinding.etCreditos.text.toString().toIntOrNull() ?: 0
-                val horas = dialogBinding.etHorasSemanales.text.toString().toIntOrNull() ?: 0
+                val cedula = dialogBinding.etCodigoCarrera.text.toString().trim()
+                val nombre = dialogBinding.etNombreCarrera.text.toString().trim()
+                val telefono = dialogBinding.etTituloCarrera.text.toString().trim()
 
                 lifecycleScope.launch {
-                    if (curso == null) {
-                        val nuevoCurso =
-                            Curso(cursoRepository.generarCodigoCurso(), nombre, creditos, horas)
+                    if (carrera == null) {
+                        val nuevoCarrera = Carrera(cedula, nombre, telefono)
                         try {
-                            val exito = cursoRepository.agregarCursoRemoto(nuevoCurso)
+                            val exito = carreraRepository.agregarCarrera(nuevoCarrera)
                             if (exito) {
                                 withContext(Dispatchers.Main) {
                                     Toast.makeText(
                                         requireContext(),
-                                        "Curso agregado",
+                                        "Carrera agregada",
                                         Toast.LENGTH_SHORT
                                     ).show()
-                                    cargarCursos()
+                                    cargarCarreras()
                                 }
                             }
                         } catch (e: Exception) {
@@ -203,20 +205,19 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
                             }
                         }
                     } else {
-                        val cursosActualizados = cursoRepository.listarCursos().map {
-                            if (it.codigoCurso == curso.codigoCurso) Curso(
-                                curso.codigoCurso,
+                        val carrerasActualizados = carreraRepository.listarCarreras().map {
+                            if (it.codigoCarrera == carrera.codigoCarrera) Carrera(
+                                cedula,
                                 nombre,
-                                creditos,
-                                horas
+                                telefono
                             ) else it
                         }
-                        cursoRepository.setCursos(cursosActualizados)
+                        carreraRepository.setCarreras(carrerasActualizados)
                         withContext(Dispatchers.Main) {
-                            adapter.actualizarLista(cursosActualizados.toMutableList())
+                            adapter.actualizarLista(carrerasActualizados.toMutableList())
                             Toast.makeText(
                                 requireContext(),
-                                "Curso actualizado",
+                                "Carrera actualizado",
                                 Toast.LENGTH_SHORT
                             ).show()
                         }

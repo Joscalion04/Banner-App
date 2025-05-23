@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 
 import com.example.frontend_mobile.R
+import com.example.frontend_mobile.data.SessionManager
 import com.example.frontend_mobile.data.repository.LoginRepository
 import kotlinx.coroutines.launch
 
@@ -22,6 +23,7 @@ class LoginViewModel(private val loginRepository: LoginRepository) : ViewModel()
             val result = loginRepository.login(username, password)
 
             if (result != null) {
+                SessionManager.user = result
                 _loginResult.value = LoginResult(success = LoggedInUserView(displayName = result.cedula))
             } else {
                 _loginResult.value = LoginResult(error = R.string.login_failed)
