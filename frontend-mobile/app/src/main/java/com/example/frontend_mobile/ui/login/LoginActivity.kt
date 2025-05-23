@@ -63,15 +63,15 @@ private lateinit var binding: ActivityLoginBinding
             }
 
             if (loginResult.success != null) {
-                updateUiWithUser(loginResult.success)
+//                updateUiWithUser(loginResult.success)
 
-                val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
-                with(sharedPref.edit()) {
-                    putBoolean("is_logged_in", true)
-                    apply()
-                }
+//                val sharedPref = getSharedPreferences("user_prefs", MODE_PRIVATE)
+//                with(sharedPref.edit()) {
+//                    putBoolean("is_logged_in", true)
+//                    apply()
+//                }
 
-                val intent = Intent(this, MainActivity::class.java)
+                val intent = Intent(this, MenuActivity::class.java)
                 startActivity(intent)
                 finish()
             }

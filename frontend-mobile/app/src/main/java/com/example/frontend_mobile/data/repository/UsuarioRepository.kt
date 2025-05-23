@@ -12,16 +12,6 @@ object UsuarioRepository {
     private const val BASE_URL = "http://10.0.2.2:8080/api"
     private val gson = Gson()
 
-    private val usuarios = mutableListOf<Usuario>()
-
-//    fun registrarUsuario(usuario: Usuario): Boolean {
-//        if (usuarios.any { it.username == usuario.username }) {
-//            return false
-//        }
-//        usuarios.add(usuario)
-//        return true
-//    }
-
     suspend fun registrarUsuario(usuario: Usuario): Boolean {
         val url = URL("$BASE_URL/insertarUsuario")
         val conn = url.openConnection() as HttpURLConnection

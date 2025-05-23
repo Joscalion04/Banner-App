@@ -36,4 +36,8 @@
     <string name="nombre_del_curso_item">Nombre del curso</string>
     <string name="c_digo_xxx">Código: XXX</string>
     <string name="_3_cr_ditos_4_hrs_semana">3 créditos · 4 hrs/semana</string>
+    <string name="t_tulo_de_la_carrera">Título de la carrera</string>
+    <string name="nombre_de_la_carrera">Nombre de la carrera</string>
+    <string name="c_digo_de_la_carrera">Código de la carrera</string>
+    <string name="agregar_carrera">Agregar carrera</string>
 </resources>
