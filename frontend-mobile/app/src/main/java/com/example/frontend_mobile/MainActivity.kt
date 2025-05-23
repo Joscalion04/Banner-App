@@ -3,6 +3,7 @@ package com.example.frontend_mobile
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.ComponentActivity
+import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.ui.login.LoginActivity
 import com.example.frontend_mobile.ui.menu.MenuActivity
 

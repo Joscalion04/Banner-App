@@ -16,9 +16,20 @@ import org.springframework.web.bind.annotation.*
 
 @RestController
 @RequestMapping("/api")
-class Controller {
-    
-    private val service: I_Service = Service()
+class Controller(
+    private val service: I_Service = Service(
+        socketHandler = TODO(),
+        daoMatricula = TODO(),
+        daoCarreras = TODO(),
+        daoCarreraCurso = TODO(),
+        daoCursos = TODO(),
+        daoProfesores = TODO(),
+        daoAlumnos = TODO(),
+        daoCiclos = TODO(),
+        daoGrupos = TODO(),
+        daoUsuarios = TODO()
+    )
+) {
 
     // ----------------- CRUD para Carrera -----------------
     @PostMapping("/insertarCarrera")
@@ -551,7 +562,7 @@ class Controller {
         return try {
             val usuarioLogueado = service.login(usuario.getCedula(), usuario.getClave())
             ResponseEntity.ok(usuarioLogueado)
-        } catch (e: com.example.backend.exceptions.NoDataException) {
+        } catch (e: NoDataException) {
             ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Credenciales incorrectas")
         } catch (e: Exception) {
             ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en login: ${e.message}")

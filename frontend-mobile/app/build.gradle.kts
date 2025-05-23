@@ -64,7 +64,8 @@ dependencies {
     androidTestImplementation(libs.androidx.ui.test.junit4)
     debugImplementation(libs.androidx.ui.tooling)
     debugImplementation(libs.androidx.ui.test.manifest)
-
+    implementation(libs.okhttp)
+    implementation(libs.json)
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.android)
 }

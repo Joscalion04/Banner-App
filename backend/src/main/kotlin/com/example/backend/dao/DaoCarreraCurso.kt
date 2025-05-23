@@ -5,9 +5,11 @@ import com.example.backend.exceptions.GlobalException
 import com.example.backend.exceptions.NoDataException
 import com.example.backend.model.*
 import org.hibernate.dialect.OracleTypes
+import org.springframework.stereotype.Repository
 import java.sql.*
 import kotlin.jvm.Throws
 
+@Repository
 class DaoCarreraCurso : Dao(){
 
     private fun tryConnection() {

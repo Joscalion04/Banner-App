@@ -7,28 +7,29 @@ package com.example.backend.service
 
 import com.example.backend.dao.*
 import com.example.backend.model.*
+import com.example.backend.webconfig.SocketHandler
 import org.springframework.stereotype.Service
 
 @Service
-class Service : I_Service {
-
-    private val dao: I_DaoMatricula = DaoMatricula()
-    private val daoCarrera  = DaoCarreras()
-    private val daoCarreraCurso = DaoCarreraCurso();
-    private val daoCursos  = DaoCursos()
-    private val daoProfesores  = DaoProfesores()
-    private val daoAlumnos  = DaoAlumnos()
-    private val daoCiclos  = DaoCiclos()
-    private val daoGrupos  = DaoGrupos()
-    private val daoUsuarios  = DaoUsuario()
-
-
+class Service(
+    private val socketHandler: SocketHandler,
+    private val daoMatricula: DaoMatricula,
+    private val daoCarreras: DaoCarreras,
+    private val daoCarreraCurso: DaoCarreraCurso,
+    private val daoCursos: DaoCursos,
+    private val daoProfesores: DaoProfesores,
+    private val daoAlumnos: DaoAlumnos,
+    private val daoCiclos: DaoCiclos,
+    private val daoGrupos: DaoGrupos,
+    private val daoUsuarios: DaoUsuario
+) : I_Service {
 
     // ----------------- CRUD para Carrera -----------------
 
     override fun insertarCarrera(carrera: Carrera) {
         try {
-            daoCarrera.insertarCarrera(carrera)
+            daoCarreras.insertarCarrera(carrera)
+            socketHandler.notificarCambio("carrera", "insertar", carrera.getCodigoCarrera())
         } catch (e: Exception) {
             throw e
         }
@@ -36,7 +37,7 @@ class Service : I_Service {
 
     override fun obtenerCarreras(): Collection<Carrera> {
         try {
-            return daoCarrera.obtenerCarreras()
+            return daoCarreras.obtenerCarreras()
         } catch (e: Exception) {
             throw e
         }
@@ -44,7 +45,8 @@ class Service : I_Service {
 
     override fun actualizarCarrera(carrera: Carrera) {
         try {
-            daoCarrera.actualizarCarrera(carrera)
+            daoCarreras.actualizarCarrera(carrera)
+            socketHandler.notificarCambio("carrera", "actualizar", carrera.getCodigoCarrera())
         } catch (e: Exception) {
             throw e
         }
@@ -52,7 +54,8 @@ class Service : I_Service {
 
     override fun eliminarCarrera(codigo: String) {
         try {
-            daoCarrera.eliminarCarrera(codigo)
+            daoCarreras.eliminarCarrera(codigo)
+            socketHandler.notificarCambio("carrera", "eliminar", codigo)
         } catch (e: Exception) {
             throw e
         }
@@ -60,7 +63,7 @@ class Service : I_Service {
 
     override fun obtenerCarreraPorCodigo(codigo: String): Carrera? {
         try {
-            return daoCarrera.obtenerCarreraPorCodigo(codigo)
+            return daoCarreras.obtenerCarreraPorCodigo(codigo)
         } catch (e: Exception) {
             throw e
         }
@@ -68,7 +71,7 @@ class Service : I_Service {
 
     override fun obtenerCarreraPorNombre(nombre: String): Collection<Carrera> {
         try {
-            return daoCarrera.obtenerCarreraPorNombre(nombre)
+            return daoCarreras.obtenerCarreraPorNombre(nombre)
         } catch (e: Exception) {
             throw e
         }
@@ -79,6 +82,7 @@ class Service : I_Service {
     override fun insertarCurso(curso: Curso) {
         try {
             daoCursos.insertarCurso(curso)
+            socketHandler.notificarCambio("curso", "insertar", curso.getCodigoCurso())
         } catch (e: Exception) {
             throw e
         }
@@ -95,6 +99,7 @@ class Service : I_Service {
     override fun actualizarCurso(curso: Curso) {
         try {
             daoCursos.actualizarCurso(curso)
+            socketHandler.notificarCambio("curso", "actualizar", curso.getCodigoCurso())
         } catch (e: Exception) {
             throw e
         }
@@ -103,6 +108,7 @@ class Service : I_Service {
     override fun eliminarCurso(codigo: String) {
         try {
             daoCursos.eliminarCurso(codigo)
+            socketHandler.notificarCambio("curso", "eliminar", codigo)
         } catch (e: Exception) {
             throw e
         }
@@ -137,6 +143,7 @@ class Service : I_Service {
     override fun insertarCarreraCurso(carreraCurso: CarreraCurso) {
         try {
             daoCarreraCurso.insertarCarreraCurso(carreraCurso)
+            socketHandler.notificarCambio("carreraCurso", "insertar", carreraCurso.getCarreraCursoId().toString())
         } catch (e: Exception) {
             throw e
         }
@@ -153,6 +160,7 @@ class Service : I_Service {
     override fun actualizarCarreraCurso(carreraCurso: CarreraCurso) {
         try {
             daoCarreraCurso.actualizarCarreraCurso(carreraCurso)
+            socketHandler.notificarCambio("carreraCurso", "actualizar", carreraCurso.getCarreraCursoId().toString())
         } catch (e: Exception) {
             throw e
         }
@@ -161,6 +169,7 @@ class Service : I_Service {
     override fun eliminarCarreraCurso(carreraCursoId: Int) {
         try {
             daoCarreraCurso.eliminarCarreraCurso(carreraCursoId)
+            socketHandler.notificarCambio("carreraCurso", "eliminar", carreraCursoId.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -179,6 +188,7 @@ class Service : I_Service {
     override fun insertarProfesor(profesor: Profesor) {
         try {
             daoProfesores.insertarProfesor(profesor)
+            socketHandler.notificarCambio("profesor", "insertar", profesor.getCedula())
         } catch (e: Exception) {
             throw e
         }
@@ -195,6 +205,7 @@ class Service : I_Service {
     override fun actualizarProfesor(profesor: Profesor) {
         try {
             daoProfesores.actualizarProfesor(profesor)
+            socketHandler.notificarCambio("profesor", "actualizar", profesor.getCedula())
         } catch (e: Exception) {
             throw e
         }
@@ -203,6 +214,7 @@ class Service : I_Service {
     override fun eliminarProfesor(cedula: String) {
         try {
             daoProfesores.eliminarProfesor(cedula)
+            socketHandler.notificarCambio("profesor", "eliminar", cedula)
         } catch (e: Exception) {
             throw e
         }
@@ -229,6 +241,7 @@ class Service : I_Service {
     override fun insertarAlumno(alumno: Alumno) {
         try {
             daoAlumnos.insertarAlumno(alumno)
+            socketHandler.notificarCambio("alumno", "insertar", alumno.getCedula())
         } catch (e: Exception) {
             throw e
         }
@@ -245,6 +258,7 @@ class Service : I_Service {
     override fun actualizarAlumno(alumno: Alumno) {
         try {
             daoAlumnos.actualizarAlumno(alumno)
+            socketHandler.notificarCambio("alumno", "actualizar", alumno.getCedula())
         } catch (e: Exception) {
             throw e
         }
@@ -253,6 +267,7 @@ class Service : I_Service {
     override fun eliminarAlumno(cedula: String) {
         try {
             daoAlumnos.eliminarAlumno(cedula)
+            socketHandler.notificarCambio("alumno", "eliminar", cedula)
         } catch (e: Exception) {
             throw e
         }
@@ -287,6 +302,7 @@ class Service : I_Service {
     override fun insertarCiclo(ciclo: Ciclo) {
         try {
             daoCiclos.insertarCiclo(ciclo)
+            socketHandler.notificarCambio("ciclo", "insertar", ciclo.getCicloId().toString())
         } catch (e: Exception) {
             throw e
         }
@@ -303,6 +319,7 @@ class Service : I_Service {
     override fun actualizarCiclo(ciclo: Ciclo) {
         try {
             daoCiclos.actualizarCiclo(ciclo)
+            socketHandler.notificarCambio("ciclo", "actualizar", ciclo.getCicloId().toString())
         } catch (e: Exception) {
             throw e
         }
@@ -311,6 +328,7 @@ class Service : I_Service {
     override fun eliminarCiclo(anio: Int, cicloId: Int) {
         try {
             daoCiclos.eliminarCiclo(anio, cicloId)
+            socketHandler.notificarCambio("ciclo", "eliminar", cicloId.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -329,6 +347,7 @@ class Service : I_Service {
     override fun insertarGrupo(grupo: Grupo) {
         try {
             daoGrupos.insertarGrupo(grupo)
+            socketHandler.notificarCambio("grupo", "insertar", grupo.getGrupoId().toString())
         } catch (e: Exception) {
             throw e
         }
@@ -345,6 +364,7 @@ class Service : I_Service {
     override fun actualizarGrupo(grupo: Grupo) {
         try {
             daoGrupos.actualizarGrupo(grupo)
+            socketHandler.notificarCambio("grupo", "actualizar", grupo.getGrupoId().toString())
         } catch (e: Exception) {
             throw e
         }
@@ -353,6 +373,7 @@ class Service : I_Service {
     override fun eliminarGrupo(grupoId: Int) {
         try {
             daoGrupos.eliminarGrupo(grupoId)
+            socketHandler.notificarCambio("grupo", "eliminar", grupoId.toString())
         } catch (e: Exception) {
             throw e
         }
@@ -371,6 +392,7 @@ class Service : I_Service {
     override fun insertarUsuario(usuario: Usuario) {
         try {
             daoUsuarios.insertarUsuario(usuario)
+            socketHandler.notificarCambio("usuario", "insertar", usuario.getCedula())
         } catch (e: Exception) {
             throw e
         }
@@ -387,6 +409,7 @@ class Service : I_Service {
     override fun actualizarUsuario(usuario: Usuario) {
         try {
             daoUsuarios.actualizarUsuario(usuario)
+            socketHandler.notificarCambio("usuario", "actualizar", usuario.getCedula())
         } catch (e: Exception) {
             throw e
         }
@@ -395,6 +418,7 @@ class Service : I_Service {
     override fun eliminarUsuario(cedula: String) {
         try {
             daoUsuarios.eliminarUsuario(cedula)
+            socketHandler.notificarCambio("usuario", "eliminar", cedula)
         } catch (e: Exception) {
             throw e
         }
@@ -420,7 +444,8 @@ class Service : I_Service {
 
     override fun registrarMatricula(grupoId: Int, cedulaAlumno: String) {
         try {
-            dao.registrarMatricula(grupoId, cedulaAlumno)
+            daoMatricula.registrarMatricula(grupoId, cedulaAlumno)
+            socketHandler.notificarCambio("matricula", "insertar", "$grupoId-$cedulaAlumno")
         } catch (e: Exception) {
             throw e
         }
@@ -428,7 +453,8 @@ class Service : I_Service {
 
     override fun eliminarMatricula(grupoId: Int, cedulaAlumno: String) {
         try {
-            dao.eliminarMatricula(grupoId, cedulaAlumno)
+            daoMatricula.eliminarMatricula(grupoId, cedulaAlumno)
+            socketHandler.notificarCambio("matricula", "eliminar", "$grupoId-$cedulaAlumno")
         } catch (e: Exception) {
             throw e
         }
@@ -438,7 +464,8 @@ class Service : I_Service {
 
     override fun registrarNota(grupoId: Int, cedulaAlumno: String, nota: Int) {
         try {
-            dao.registrarNota(grupoId, cedulaAlumno, nota)
+            daoMatricula.registrarNota(grupoId, cedulaAlumno, nota)
+            socketHandler.notificarCambio("nota", "insertar", "$grupoId-$cedulaAlumno")
         } catch (e: Exception) {
             throw e
         }
@@ -448,7 +475,7 @@ class Service : I_Service {
 
     override fun consultarHistorialAcademico(cedulaAlumno: String): Collection<Matricula> {
         try {
-            return dao.consultarHistorialAcademico(cedulaAlumno)
+            return daoMatricula.consultarHistorialAcademico(cedulaAlumno)
         } catch (e: Exception) {
             throw e
         }

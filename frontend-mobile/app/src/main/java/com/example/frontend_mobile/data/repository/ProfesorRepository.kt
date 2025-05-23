@@ -24,7 +24,7 @@ object ProfesorRepository {
         try {
             // Convertir el profesor a JSON (usamos Gson)
             val jsonProfesor = gson.toJson(profesor)
-
+            
             // Enviar JSON
             conn.outputStream.use { os ->
                 os.write(jsonProfesor.toByteArray(Charsets.UTF_8))

@@ -56,21 +56,26 @@ object UsuarioRepository {
 
     suspend fun getUsuarioRemoto(cedula: String, clave: String): Usuario? =
         withContext(Dispatchers.IO) {
-            val url = URL("$BASE_URL/obtenerUsuarioPorCedula/$cedula")
+            val url = URL("$BASE_URL/login")
             val conn = url.openConnection() as HttpURLConnection
-            conn.requestMethod = "GET"
+            conn.requestMethod = "POST"
+            conn.setRequestProperty("Content-Type", "application/json")
             conn.setRequestProperty("Accept", "application/json")
+            conn.doOutput = true
 
             try {
+                // Solo se envían cedula y clave
+                val usuarioJson = gson.toJson(Usuario(cedula = cedula, clave = clave))
+                conn.outputStream.bufferedWriter().use { it.write(usuarioJson) }
+
                 val responseCode = conn.responseCode
                 if (responseCode == HttpURLConnection.HTTP_OK) {
                     val response = conn.inputStream.bufferedReader().use { it.readText() }
-                    val usuario = gson.fromJson(response, Usuario::class.java)
-                    if (usuario.clave == clave) usuario else null
+                    gson.fromJson(response, Usuario::class.java) // Aquí ya viene con tipoUsuario y más
                 } else {
                     val error = conn.errorStream?.bufferedReader()?.use { it.readText() }
                         ?: "Error desconocido"
-                    println("Error al obtener usuario ($responseCode): $error")
+                    println("Error al hacer login ($responseCode): $error")
                     null
                 }
             } catch (e: Exception) {
@@ -80,6 +85,4 @@ object UsuarioRepository {
                 conn.disconnect()
             }
         }
-
-
 }

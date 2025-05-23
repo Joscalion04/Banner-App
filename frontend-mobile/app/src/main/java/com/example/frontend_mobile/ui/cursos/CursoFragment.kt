@@ -12,6 +12,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.data.model.Curso
 import com.example.frontend_mobile.data.repository.CursoRepository
 import com.example.frontend_mobile.databinding.DialogCursoBinding
@@ -42,6 +43,14 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         binding.recyclerViewCursos.adapter = adapter
 
         cargarCursos()
+
+        WebSocketManager.conectar { tipo, evento, id ->
+            if (tipo == "matricula" && (evento == "insertar" || evento == "actualizar" || evento == "eliminar")) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    cargarCursos()
+                }
+            }
+        }
 
         binding.searchViewCursos.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
             override fun onQueryTextSubmit(query: String?) = true.also { filtrarCursos(query) }
