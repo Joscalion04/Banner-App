@@ -43,6 +43,7 @@ frontend-web/
 ├── package.json
 └── README.md
 
+```
 
 
 ## ⚙️ Configuración del Entorno
