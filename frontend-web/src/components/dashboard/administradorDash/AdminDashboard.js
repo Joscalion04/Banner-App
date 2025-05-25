@@ -9,7 +9,7 @@ import CyclesSection from './components/CyclesSection';
 import GroupsSection from './components/GroupsSection';
 import useAdminData from './hooks/useAdminData';
 
-const AdminDashboard = ({ user }) => {
+const AdminDashboard = ({ user , onLogout}) => {
     const [activeSection, setActiveSection] = useState('dashboard');
     const [activeCRUDSection, setActiveCRUDSection] = useState(null);
     
@@ -72,6 +72,7 @@ const AdminDashboard = ({ user }) => {
                 activeCRUDSection={activeCRUDSection}
                 setActiveSection={setActiveSection}
                 setActiveCRUDSection={setActiveCRUDSection}
+                onLogout={onLogout}
             />
             <main className={styles.mainContent}>
                 <header className={styles.header}>

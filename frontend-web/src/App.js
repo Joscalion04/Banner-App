@@ -25,7 +25,6 @@ function App() {
     const handleLogout = () => {
         setUser(null);
         localStorage.removeItem('user');
-        // Aquí podrías agregar limpieza de otros estados si es necesario
     };
 
     return (
@@ -63,7 +62,7 @@ function App() {
                 <Route 
                     path="/administrador" 
                     element={user && user.tipoUsuario === 'ADMINISTRADOR' ? (
-                        <AdminDashboard user={user} onLogout={handleLogout} />
+                        <AdminDashboard user={user} onLogout={() => setUser(null)} />
                     ) : (
                         <Navigate to="/login" replace />
                     )}
