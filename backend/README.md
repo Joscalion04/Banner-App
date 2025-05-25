@@ -11,6 +11,10 @@ Aplicación web para la gestión académica de estudiantes, inspirada en sistema
   - Oracle JDBC
   - Kotlin
 
+## 📁 Arquitectura
+
+![Arquitectura del sistema](https://raw.githubusercontent.com/Joscalion04/Banner-App/main/backend/Backend_Arquitectura.png)
+
 ## 📁 Estructura del Proyecto
 
 ```plaintext
@@ -29,4 +33,4 @@ frontend-web/
 │   │           └── service/ # Servicios de Proxy para acceso al DAO
 │   └── resoruces/application.properties
 └── pom.xml
-
+```

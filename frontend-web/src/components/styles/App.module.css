@@ -335,3 +335,316 @@ body, html {
     cursor: pointer;
     font-size: 0.9rem;
 }
+
+/* Agrega estos estilos a tu App.module.css */
+.profileHeader {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.logoutButton {
+    padding: 0.5rem 1rem;
+    background-color: #f44336;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: background-color 0.3s;
+}
+
+.logoutButton:hover {
+    background-color: #d32f2f;
+}
+
+.logoutButton {
+  padding: 8px 16px;
+  background-color: #f44336;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+  margin-left: auto; /* Para alinear a la derecha */
+}
+
+.logoutButton:hover {
+  background-color: #d32f2f;
+}
+
+/* Estilos generales para todas las tablas */
+.tableContainer {
+  width: 100%;
+  overflow-x: auto;
+  margin: 1rem 0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+}
+
+.dataTable {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.9rem;
+}
+
+.dataTable th, .dataTable td {
+  padding: 12px 15px;
+  text-align: left;
+  border-bottom: 1px solid #e0e0e0;
+}
+
+.dataTable th {
+  background-color: #f5f7fa;
+  color: #333;
+  font-weight: 600;
+  text-transform: uppercase;
+  font-size: 0.8rem;
+  letter-spacing: 0.5px;
+}
+
+.dataTable tr:hover {
+  background-color: #f9f9f9;
+}
+
+/* Estilos para botones de acción */
+.actionButtons {
+  display: flex;
+  gap: 8px;
+}
+
+.btn {
+  padding: 6px 12px;
+  border-radius: 4px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  border: none;
+}
+
+.btnEdit {
+  background-color: #ffc107;
+  color: #212529;
+}
+
+.btnDelete {
+  background-color: #dc3545;
+  color: white;
+}
+
+.btnAdd {
+  background-color: #28a745;
+  color: white;
+  margin-bottom: 1rem;
+}
+
+.btn:hover {
+  opacity: 0.9;
+  transform: translateY(-1px);
+}
+
+/* Estilos específicos para cada tipo de tabla */
+/* Tabla de Profesores */
+.teachersTable th {
+  background-color: #e3f2fd;
+}
+
+/* Tabla de Alumnos */
+.studentsTable th {
+  background-color: #e8f5e9;
+}
+
+/* Tabla de Cursos */
+.coursesTable th {
+  background-color: #fff3e0;
+}
+
+/* Tabla de Ciclos Académicos */
+.cyclesTable th {
+  background-color: #f3e5f5;
+}
+
+/* Tabla de Grupos */
+.groupsTable th {
+  background-color: #e0f7fa;
+}
+
+/* Formularios CRUD */
+.formContainer {
+  background: white;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+  margin-top: 1rem;
+}
+
+.formGroup {
+  margin-bottom: 1rem;
+}
+
+.formGroup label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #555;
+}
+
+.formGroup input, .formGroup select {
+  width: 100%;
+  padding: 0.5rem;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 0.9rem;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .dataTable th, .dataTable td {
+    padding: 8px 10px;
+  }
+  
+  .actionButtons {
+    flex-direction: column;
+    gap: 4px;
+  }
+  
+  .btn {
+    padding: 4px 8px;
+    font-size: 0.7rem;
+  }
+}
+
+.dashboardOverview {
+    padding: 2rem;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.header {
+    margin-bottom: 2rem;
+    text-align: center;
+}
+
+.header h2 {
+    font-size: 1.8rem;
+    color: #2c3e50;
+    margin-bottom: 0.5rem;
+}
+
+.subtitle {
+    color: #7f8c8d;
+    font-size: 1rem;
+}
+
+.statsContainer {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+}
+
+.statCard {
+    background: white;
+    border-radius: 10px;
+    padding: 1.5rem;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.statCard:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}
+
+.cardIcon {
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 1rem;
+}
+
+.teacherCard .cardIcon {
+    background-color: rgba(52, 152, 219, 0.2);
+    color: #3498db;
+}
+
+.studentCard .cardIcon {
+    background-color: rgba(46, 204, 113, 0.2);
+    color: #2ecc71;
+}
+
+.courseCard .cardIcon {
+    background-color: rgba(155, 89, 182, 0.2);
+    color: #9b59b6;
+}
+
+.cycleCard .cardIcon {
+    background-color: rgba(241, 196, 15, 0.2);
+    color: #f1c40f;
+}
+
+.groupCard .cardIcon {
+    background-color: rgba(231, 76, 60, 0.2);
+    color: #e74c3c;
+}
+
+.cardContent h3 {
+    font-size: 1rem;
+    color: #7f8c8d;
+    margin-bottom: 0.5rem;
+}
+
+.statNumber {
+    font-size: 1.8rem;
+    font-weight: bold;
+    color: #2c3e50;
+    margin: 0;
+    line-height: 1;
+}
+
+.statLabel {
+    font-size: 0.8rem;
+    color: #95a5a6;
+    margin: 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+    .statsContainer {
+        grid-template-columns: 1fr 1fr;
+    }
+}
+
+@media (max-width: 480px) {
+    .statsContainer {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* Users Table */
+.usersTable th:nth-child(1) { width: 20%; }
+.usersTable th:nth-child(2) { width: 25%; }
+.usersTable th:nth-child(3) { width: 25%; }
+.usersTable th:nth-child(4) { width: 30%; }
+
+/* Password toggle button */
+.showPasswordBtn {
+  margin-left: 8px;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.showPasswordBtn:hover {
+  background: #e0e0e0;
+}

@@ -17,7 +17,7 @@ open class Dao {
     @Throws(SQLException::class, ClassNotFoundException::class)
     protected fun conectar() {
         Class.forName("oracle.jdbc.driver.OracleDriver")
-        conexion = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "root")
+        conexion = DriverManager.getConnection("jdbc:oracle:thin:@localhost:1521:XE", "system", "system2")
     }
 
     @Throws(SQLException::class)

@@ -34,6 +34,8 @@ const Login = ({ onLogin }) => {
                 navigate('/alumno');
             } else if (userData.tipoUsuario === 'PROFESOR') {
                 navigate('/profesor');
+            } else if (userData.tipoUsuario === 'ADMINISTRADOR') {
+                navigate('/administrador');
             } else {
                 throw new Error('Tipo de usuario no reconocido');
             }
