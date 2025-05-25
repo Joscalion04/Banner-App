@@ -8,7 +8,6 @@ export const fetchApi = async (endpoint, options = {}) => {
         },
         ...options
     });
-    
     const textResponse = await response.text(); // Primero obtener como texto
 
     try {
@@ -81,11 +80,20 @@ export const insertarGrupo = async (data) => fetchApi('/insertarGrupo', { method
 export const actualizarGrupo = async (data) => fetchApi('/actualizarGrupo', { method: 'POST', body: JSON.stringify(data) });
 export const eliminarGrupo = async (id) => fetchApi(`/eliminarGrupo/${id}`, { method: 'DELETE' });
 
-// CRUD para Carrera-Curso
+// CRUD para CarreraCurso
 export const obtenerCarrerasCursos = async () => fetchApi('/obtenerCarrerasCursos');
-export const insertarCarreraCurso = async (data) => fetchApi('/insertarCarreraCurso', { method: 'POST', body: JSON.stringify(data) });
-export const actualizarCarreraCurso = async (data) => fetchApi('/actualizarCarreraCurso', { method: 'POST', body: JSON.stringify(data) });
-export const eliminarCarreraCurso = async (id) => fetchApi(`/eliminarCarreraCurso/${id}`, { method: 'DELETE' });
+export const obtenerCarreraCursoPorId = async (id) => fetchApi(`/obtenerCarreraCurso/${id}`);
+export const insertarCarreraCurso = async (data) => fetchApi('/insertarCarreraCurso', { 
+  method: 'POST', 
+  body: JSON.stringify(data) 
+});
+export const actualizarCarreraCurso = async (data) => fetchApi('/actualizarCarreraCurso', { 
+  method: 'POST', 
+  body: JSON.stringify(data) 
+});
+export const eliminarCarreraCurso = async (id) => fetchApi(`/eliminarCarreraCurso/${id}`, { 
+  method: 'DELETE' 
+});
 
 // CRUD para Usuarios
 export const obtenerUsuarios = async () => fetchApi('/obtenerUsuarios');

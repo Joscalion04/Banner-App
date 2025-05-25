@@ -39,6 +39,12 @@ const Sidebar = ({ activeSection, activeCRUDSection, setActiveSection, setActive
                     Cursos
                 </li>
                 <li 
+                    className={activeCRUDSection === 'careerCourses' ? styles.active : ''}
+                    onClick={() => { setActiveCRUDSection('careerCourses'); }}
+                    >
+                    Carreras-Cursos
+                </li>
+                <li 
                     className={activeCRUDSection === 'academicCycles' ? styles.active : ''}
                     onClick={() => { setActiveCRUDSection('academicCycles'); }}
                 >

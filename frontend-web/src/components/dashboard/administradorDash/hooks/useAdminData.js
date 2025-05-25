@@ -157,11 +157,28 @@ const useAdminData = () => {
     }
     };
 
+
+    const handleDeleteCareerCourse = async (id) => {
+        try {
+            setLoading(true);
+            await adminApi.eliminarCarreraCurso(id);
+            setCareerCourses(careerCourses.filter(cc => cc.carreraCursoId !== id));
+            return true;
+        } catch (err) {
+            if (err.message.includes('registros dependientes')) {
+            throw new Error('No se puede eliminar: existen registros dependientes');
+            }
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
+
     return {
         teachers, students, courses, academicCycles, groups,
         careers, users, careerCourses, loading, error,
         handleDeleteTeacher, handleDeleteStudent, handleDeleteCourse,
-        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer, handleDeleteUser
+        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer, handleDeleteUser, handleDeleteCareerCourse
     };
 };
 
