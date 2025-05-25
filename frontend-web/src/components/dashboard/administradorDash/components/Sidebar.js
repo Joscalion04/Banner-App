@@ -44,6 +44,12 @@ const Sidebar = ({ activeSection, activeCRUDSection, setActiveSection, setActive
                 >
                     Grupos
                 </li>
+                <li 
+                    className={activeCRUDSection === 'careers' ? styles.active : ''}
+                    onClick={() => { setActiveCRUDSection('careers'); }}
+                    >
+                    Carreras
+                </li>
             </ul>
              <div className={styles.sidebarFooter}>
                 <LogoutButton 

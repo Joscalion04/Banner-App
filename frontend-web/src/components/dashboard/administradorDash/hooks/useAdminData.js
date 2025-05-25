@@ -122,11 +122,24 @@ const useAdminData = () => {
         }
     };
 
+    // Añade esta función:
+    const handleDeleteCareer = async (codigo) => {
+    try {
+        setLoading(true);
+        await adminApi.eliminarCarrera(codigo);
+        setCareers(careers.filter(c => c.codigoCarrera !== codigo));
+    } catch (err) {
+        throw err; // Se maneja en el componente
+    } finally {
+        setLoading(false);
+    }
+    };
+
     return {
         teachers, students, courses, academicCycles, groups,
         careers, careerCourses, loading, error,
         handleDeleteTeacher, handleDeleteStudent, handleDeleteCourse,
-        handleDeleteCycle, handleDeleteGroup
+        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer
     };
 };
 

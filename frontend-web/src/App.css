@@ -311,3 +311,17 @@
 }
 
 /* ... (otros estilos existentes) ... */
+
+/* Careers Table */
+.careersTable th:nth-child(1) { width: 15%; }
+.careersTable th:nth-child(2) { width: 35%; }
+.careersTable th:nth-child(3) { width: 35%; }
+.careersTable th:nth-child(4) { width: 15%; }
+
+/* Section Header */
+.sectionHeader {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}

@@ -30,11 +30,21 @@ export const fetchApi = async (endpoint, options = {}) => {
     }
 };
 
-// CRUD para Carreras
+// CRUD para Carreras (completo)
 export const obtenerCarreras = async () => fetchApi('/obtenerCarreras');
-export const insertarCarrera = async (data) => fetchApi('/insertarCarrera', { method: 'POST', body: JSON.stringify(data) });
-export const actualizarCarrera = async (data) => fetchApi('/actualizarCarrera', { method: 'POST', body: JSON.stringify(data) });
-export const eliminarCarrera = async (codigo) => fetchApi(`/eliminarCarrera/${codigo}`, { method: 'DELETE' });
+export const obtenerCarreraPorCodigo = async (codigo) => fetchApi(`/obtenerCarrera/code/${codigo}`);
+export const obtenerCarreraPorNombre = async (nombre) => fetchApi(`/obtenerCarrera/name/${nombre}`);
+export const insertarCarrera = async (data) => fetchApi('/insertarCarrera', { 
+  method: 'POST', 
+  body: JSON.stringify(data) 
+});
+export const actualizarCarrera = async (data) => fetchApi('/actualizarCarrera', { 
+  method: 'POST', 
+  body: JSON.stringify(data) 
+});
+export const eliminarCarrera = async (codigo) => fetchApi(`/eliminarCarrera/${codigo}`, { 
+  method: 'DELETE' 
+});
 
 // CRUD para Cursos
 export const obtenerCursos = async () => fetchApi('/obtenerCursos');

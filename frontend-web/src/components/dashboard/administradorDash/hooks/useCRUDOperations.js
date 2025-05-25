@@ -44,6 +44,25 @@ const useCRUDOperations = (entityType, {
                 `;
                 break;
 
+            case 'careers':
+                formHTML = `
+                    <div class="sweet-form-group">
+                    <label>Código:</label>
+                    <input type="text" id="swal-codigoCarrera" class="swal2-input"  value="${formData.codigoCarrera || ''}" placeholder="Código" required>
+                    </div>
+                    <div class="sweet-form-group">
+                    <label>Nombre:</label>
+                    <input type="text" id="swal-nombre" class="swal2-input" 
+                        value="${formData.nombre || ''}" placeholder="Nombre" required>
+                    </div>
+                    <div class="sweet-form-group">
+                    <label>Título:</label>
+                    <input type="text" id="swal-titulo" class="swal2-input" 
+                        value="${formData.titulo || ''}" placeholder="Título otorgado" required>
+                    </div>
+                `;
+                break;
+
             case 'students':
                 const careerOptions = careers.map(c => 
                     `<option value="${c.codigoCarrera}" ${formData.codigoCarrera === c.codigoCarrera ? 'selected' : ''}>${c.nombre}</option>`
@@ -196,7 +215,15 @@ const useCRUDOperations = (entityType, {
                         codigoCarrera: document.getElementById('swal-codigoCarrera').value
                     };
                     break;
-                    
+                
+                case 'careers':
+                    formData = {
+                        codigoCarrera: document.getElementById('swal-codigoCarrera').value,
+                        nombre: document.getElementById('swal-nombre').value,
+                        titulo: document.getElementById('swal-titulo').value
+                    };
+                    break;
+
                 case 'courses':
                     formData = {
                         codigoCurso: document.getElementById('swal-codigoCurso').value,
@@ -258,6 +285,15 @@ const useCRUDOperations = (entityType, {
                         result = await adminApi.insertarCurso(formData);
                     }
                     break;
+                
+                case 'careers':
+                    if (isEditing) {
+                        await adminApi.actualizarCarrera(formData);
+                    } else {
+                        result = await adminApi.insertarCarrera(formData);
+                    }
+                    break;
+                    
                 case 'academicCycles':
                     if (isEditing) {
                         await adminApi.actualizarCiclo(formData);
