@@ -8,6 +8,7 @@ import CoursesSection from './components/CoursesSection';
 import CyclesSection from './components/CyclesSection';
 import GroupsSection from './components/GroupsSection';
 import CareersSection from './components/CareersSection';
+import UsersSection from './components/UsersSection';
 import useAdminData from './hooks/useAdminData';
 
 const AdminDashboard = ({ user , onLogout}) => {
@@ -16,9 +17,9 @@ const AdminDashboard = ({ user , onLogout}) => {
     
     const {
         teachers, students, courses, academicCycles, groups,
-        careers, careerCourses, loading, error,
+        careers, users, careerCourses, loading, error,
         handleDeleteTeacher, handleDeleteStudent, handleDeleteCourse,
-        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer
+        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer, handleDeleteUser
     } = useAdminData();
 
     const renderCRUDSection = () => {
@@ -26,6 +27,11 @@ const AdminDashboard = ({ user , onLogout}) => {
         if (error) return <div className={styles.error}>Error: {error}</div>;
 
         switch(activeCRUDSection) {
+            case 'users':
+                return <UsersSection 
+                    users={users} 
+                    onDelete={handleDeleteUser} 
+                />;
             case 'teachers':
                 return <TeachersSection 
                     teachers={teachers} 

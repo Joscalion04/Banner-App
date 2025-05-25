@@ -627,3 +627,24 @@ body, html {
         grid-template-columns: 1fr;
     }
 }
+
+/* Users Table */
+.usersTable th:nth-child(1) { width: 20%; }
+.usersTable th:nth-child(2) { width: 25%; }
+.usersTable th:nth-child(3) { width: 25%; }
+.usersTable th:nth-child(4) { width: 30%; }
+
+/* Password toggle button */
+.showPasswordBtn {
+  margin-left: 8px;
+  padding: 2px 6px;
+  font-size: 0.8rem;
+  background: #f0f0f0;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.showPasswordBtn:hover {
+  background: #e0e0e0;
+}

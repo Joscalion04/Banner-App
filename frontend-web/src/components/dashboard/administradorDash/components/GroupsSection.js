@@ -33,7 +33,7 @@ const GroupsSection = ({ groups, courses, teachers, cycles, onDelete }) => {
                             const course = courses.find(c => c.codigoCurso === group.codigoCurso) || {};
                             const teacher = teachers.find(t => t.cedula === group.cedulaProfesor) || {};
                             const cycle = cycles.find(c => 
-                                c.anio === group.anio && c.numero === group.numeroCiclo
+                                c.anio === group.anio && c.numero === group.cicloId
                             ) || {};
                             
                             return (
@@ -41,7 +41,7 @@ const GroupsSection = ({ groups, courses, teachers, cycles, onDelete }) => {
                                     <td>{group.grupoId}</td>
                                     <td>{course.nombre || group.codigoCurso}</td>
                                     <td>{teacher.nombre || group.cedulaProfesor}</td>
-                                    <td>{cycle.anio ? `${cycle.anio}-${cycle.numero}` : `${group.anio}-${group.numeroCiclo}`}</td>
+                                    <td>Ciclo: {group.cicloId}</td>
                                     <td>{group.horario}</td>
                                     <td>
                                         <div className={styles.actionButtons}>

@@ -11,6 +11,7 @@ const useAdminData = () => {
     const [groups, setGroups] = useState([]);
     const [careers, setCareers] = useState([]);
     const [careerCourses, setCareerCourses] = useState([]);
+    const [users, setUsers] = useState([]);
 
     useEffect(() => {
         const loadInitialData = async () => {
@@ -24,7 +25,8 @@ const useAdminData = () => {
                     coursesData, 
                     cyclesData, 
                     groupsData,
-                    careerCoursesData
+                    careerCoursesData,
+                    usersData 
                 ] = await Promise.all([
                     adminApi.obtenerCarreras(),
                     adminApi.obtenerProfesores(),
@@ -32,7 +34,8 @@ const useAdminData = () => {
                     adminApi.obtenerCursos(),
                     adminApi.obtenerCiclos(),
                     adminApi.obtenerGrupos(),
-                    adminApi.obtenerCarrerasCursos()
+                    adminApi.obtenerCarrerasCursos(),
+                    adminApi.obtenerUsuarios()
                 ]);
                 
                 setCareers(careersData);
@@ -42,6 +45,8 @@ const useAdminData = () => {
                 setAcademicCycles(cyclesData);
                 setGroups(groupsData);
                 setCareerCourses(careerCoursesData);
+                setUsers(usersData);
+
             } catch (err) {
                 setError(err.message);
             } finally {
@@ -51,6 +56,23 @@ const useAdminData = () => {
         
         loadInitialData();
     }, []);
+
+
+    const handleDeleteUser = async (cedula) => {
+        try {
+            setLoading(true);
+            await adminApi.eliminarUsuario(cedula);
+            setUsers(users.filter(u => u.cedula !== cedula));
+            return true;
+        } catch (err) {
+            if (err.message.includes('registros dependientes')) {
+            throw new Error('No se puede eliminar: usuario tiene registros asociados');
+            }
+            throw err;
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const handleDeleteTeacher = async (cedula) => {
         if (!window.confirm('¿Está seguro de eliminar este profesor?')) return;
@@ -137,9 +159,9 @@ const useAdminData = () => {
 
     return {
         teachers, students, courses, academicCycles, groups,
-        careers, careerCourses, loading, error,
+        careers, users, careerCourses, loading, error,
         handleDeleteTeacher, handleDeleteStudent, handleDeleteCourse,
-        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer
+        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer, handleDeleteUser
     };
 };
 

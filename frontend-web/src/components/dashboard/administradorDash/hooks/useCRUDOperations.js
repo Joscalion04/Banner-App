@@ -44,6 +44,30 @@ const useCRUDOperations = (entityType, {
                 `;
                 break;
 
+            case 'users':
+                formHTML = `
+                    <div class="sweet-form-group">
+                    <label>Cédula:</label>
+                    <input type="text" id="swal-cedula" class="swal2-input" 
+                        value="${formData.cedula || ''}" placeholder="Cédula" required >
+                    </div>
+                    <div class="sweet-form-group">
+                    <label>Contraseña:</label>
+                    <input type="password" id="swal-clave" class="swal2-input" 
+                        value="${formData.clave || ''}" placeholder="Contraseña" required>
+                    </div>
+                    <div class="sweet-form-group">
+                    <label>Tipo de Usuario:</label>
+                    <select id="swal-tipoUsuario" class="swal2-input" required>
+                        <option value="">Seleccione...</option>
+                        <option value="ADMINISTRADOR" ${formData.tipoUsuario === 'admin' ? 'selected' : ''}>Administrador</option>
+                        <option value="PROFESOR" ${formData.tipoUsuario === 'profesor' ? 'selected' : ''}>Profesor</option>
+                        <option value="ALUMNO" ${formData.tipoUsuario === 'alumno' ? 'selected' : ''}>Alumno</option>
+                    </select>
+                    </div>
+                `;
+                break;
+
             case 'careers':
                 formHTML = `
                     <div class="sweet-form-group">
@@ -232,7 +256,15 @@ const useCRUDOperations = (entityType, {
                         horasSemanales: parseInt(document.getElementById('swal-horasSemanales').value)
                     };
                     break;
-                    
+                
+                case 'users':
+                    formData = {
+                        cedula: document.getElementById('swal-cedula').value,
+                        clave: document.getElementById('swal-clave').value,
+                        tipoUsuario: document.getElementById('swal-tipoUsuario').value
+                    };
+                    break;
+
                 case 'academicCycles':
                     formData = {
                         anio: parseInt(document.getElementById('swal-anio').value),
@@ -308,6 +340,15 @@ const useCRUDOperations = (entityType, {
                         result = await adminApi.insertarGrupo(formData);
                     }
                     break;
+                
+                case 'users':
+                    if (isEditing) {
+                        await adminApi.actualizarUsuario(formData);
+                    } else {
+                        result = await adminApi.insertarUsuario(formData);
+                    }
+                    break;
+
                 default:
                     break;
             }

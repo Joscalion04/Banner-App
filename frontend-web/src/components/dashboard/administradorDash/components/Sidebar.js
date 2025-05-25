@@ -15,6 +15,12 @@ const Sidebar = ({ activeSection, activeCRUDSection, setActiveSection, setActive
                     Dashboard
                 </li>
                 <li 
+                    className={activeCRUDSection === 'users' ? styles.active : ''}
+                    onClick={() => { setActiveCRUDSection('users'); }}
+                    >
+                    Usuarios
+                </li>
+                <li 
                     className={activeCRUDSection === 'teachers' ? styles.active : ''}
                     onClick={() => { setActiveCRUDSection('teachers'); }}
                 >
