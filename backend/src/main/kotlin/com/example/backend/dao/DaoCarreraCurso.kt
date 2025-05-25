@@ -108,11 +108,12 @@ class DaoCarreraCurso : Dao(){
         var pstmt: CallableStatement? = null
 
         try {
-            pstmt = conexion?.prepareCall("{call MOVILES.ACTUALIZAR_CARRERA_CURSO(?, ?, ?, ?)}")
+            pstmt = conexion?.prepareCall("{call MOVILES.ACTUALIZAR_CARRERA_CURSO(?, ?, ?, ?, ?)}")
             pstmt?.setInt(1, carreraCurso.getCarreraCursoId())
-            pstmt?.setInt(2, carreraCurso.getAnio())
-            pstmt?.setInt(3, carreraCurso.getCiclo())
-            pstmt?.setInt(4, carreraCurso.getOrden())
+            pstmt?.setString(2, carreraCurso.getCodigoCarrera())
+            pstmt?.setInt(3, carreraCurso.getAnio())
+            pstmt?.setInt(4, carreraCurso.getCiclo())
+            pstmt?.setInt(5, carreraCurso.getOrden())
 
             val resultado = pstmt?.executeUpdate()
             if (resultado == 0) {

@@ -33,7 +33,7 @@ class DaoAlumnos : Dao() {
             pstmt?.setString(4, alumno.getEmail())
 
             // Corrección importante para la fecha:
-            val fechaNacimiento = java.sql.Date(alumno.getFechaNacimiento().time)
+            val fechaNacimiento = Date.valueOf(alumno.getFechaNacimiento())
             pstmt?.setDate(5, fechaNacimiento)
 
             pstmt?.setString(6, alumno.getCodigoCarrera())
@@ -76,7 +76,7 @@ class DaoAlumnos : Dao() {
                         rs.getString("nombre"),
                         rs.getString("telefono"),
                         rs.getString("email"),
-                        rs.getDate("fecha_nacimiento"),
+                        rs.getDate("fecha_nacimiento").toLocalDate(),
                         rs.getString("codigo_carrera")
                     )
                 )
@@ -115,7 +115,7 @@ class DaoAlumnos : Dao() {
             pstmt?.setString(4, alumno.getEmail())
 
             // Corrección para la fecha (igual que en insertar)
-            val fechaNacimiento = java.sql.Date(alumno.getFechaNacimiento().time)
+            val fechaNacimiento = Date.valueOf(alumno.getFechaNacimiento())
             pstmt?.setDate(5, fechaNacimiento)
 
             pstmt?.setString(6, alumno.getCodigoCarrera())
@@ -185,7 +185,7 @@ class DaoAlumnos : Dao() {
                     rs.getString("nombre"),
                     rs.getString("telefono"),
                     rs.getString("email"),
-                    rs.getDate("fecha_nacimiento"),
+                    rs.getDate("fecha_nacimiento").toLocalDate(),
                     rs.getString("codigo_carrera")
                 )
             } else {
@@ -231,7 +231,7 @@ class DaoAlumnos : Dao() {
                         rs.getString("nombre"),
                         rs.getString("telefono"),
                         rs.getString("email"),
-                        rs.getDate("fecha_nacimiento"),
+                        rs.getDate("fecha_nacimiento").toLocalDate(),
                         rs.getString("codigo_carrera")
                     )
                 )
@@ -282,7 +282,7 @@ class DaoAlumnos : Dao() {
                         rs.getString("nombre"),
                         rs.getString("telefono"),
                         rs.getString("email"),
-                        rs.getDate("fecha_nacimiento"),
+                        rs.getDate("fecha_nacimiento").toLocalDate(),
                         rs.getString("codigo_carrera")
                     )
                 )

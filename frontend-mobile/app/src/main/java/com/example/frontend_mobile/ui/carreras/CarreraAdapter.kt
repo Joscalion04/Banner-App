@@ -24,9 +24,9 @@ class CarreraAdapter(
     inner class CarreraViewHolder(val binding: ItemCarreraCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(carrera: Carrera) {
-            binding.tvCodigoCarrera.text = carrera.codigoCarrera
-            binding.tvNombreCarrera.text = carrera.nombre
-            binding.tvTituloCarrera.text = carrera.titulo
+            binding.tvCodigoCarrera.text = "Código: " + carrera.codigoCarrera
+            binding.tvNombreCarrera.text = "Nombre: " + carrera.nombre
+            binding.tvTituloCarrera.text = "Titulo a otorgar: " + carrera.titulo
             binding.root.setOnClickListener { listener.onCarreraClick(carrera) }
             binding.root.setOnLongClickListener { listener.onCarreraLongClick(carrera) }
         }

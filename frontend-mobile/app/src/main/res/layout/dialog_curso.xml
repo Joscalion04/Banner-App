@@ -33,5 +33,19 @@
             android:hint="@string/horas_semanales"
             android:inputType="number" />
 
+        <Spinner
+            android:id="@+id/etSpinnerCarreraCurso"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="8dp"/>
+
+        <Spinner
+            android:id="@+id/etSpinnerCicloCurso"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:spinnerMode="dropdown"
+            android:layout_marginTop="8dp"/>
+
     </LinearLayout>
 </ScrollView>

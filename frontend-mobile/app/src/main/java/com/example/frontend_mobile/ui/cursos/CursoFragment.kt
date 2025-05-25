@@ -1,11 +1,14 @@
 package com.example.frontend_mobile.ui.cursos
 
+import android.os.Build
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -13,7 +16,11 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.WebSocketManager
+import com.example.frontend_mobile.data.model.CarreraCurso
 import com.example.frontend_mobile.data.model.Curso
+import com.example.frontend_mobile.data.repository.CarreraCursoRepository
+import com.example.frontend_mobile.data.repository.CarreraRepository
+import com.example.frontend_mobile.data.repository.CicloRepository
 import com.example.frontend_mobile.data.repository.CursoRepository
 import com.example.frontend_mobile.databinding.DialogCursoBinding
 import com.example.frontend_mobile.databinding.FragmentCursosBinding
@@ -24,7 +31,10 @@ import kotlinx.coroutines.withContext
 class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
 
     private lateinit var binding: FragmentCursosBinding
-    private val cursoRepository = CursoRepository;
+    private val cursoRepository = CursoRepository
+    private val carreraRepository = CarreraRepository
+    private val cicloRepository = CicloRepository
+    private val carrerasCursosRepository = CarreraCursoRepository
     private lateinit var adapter: CursoAdapter
 
     override fun onCreateView(
@@ -35,6 +45,7 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         return binding.root
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
@@ -53,7 +64,9 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         }
 
         binding.searchViewCursos.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onQueryTextSubmit(query: String?) = true.also { filtrarCursos(query) }
+            @RequiresApi(Build.VERSION_CODES.O)
             override fun onQueryTextChange(newText: String?) = true.also { filtrarCursos(newText) }
         })
 
@@ -115,6 +128,7 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         touchHelper.attachToRecyclerView(binding.recyclerViewCursos)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun cargarCursos() {
         lifecycleScope.launch {
             val cursosRemotos = cursoRepository.listarCursos() // suspende y espera la respuesta
@@ -122,6 +136,7 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun filtrarCursos(query: String?) {
         lifecycleScope.launch {
             val cursos = cursoRepository.listarCursos()
@@ -137,10 +152,12 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCursoClick(curso: Curso) {
         mostrarDialogCurso(curso)
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onCursoLongClick(curso: Curso): Boolean {
         AlertDialog.Builder(requireContext())
             .setTitle("Eliminar curso")
@@ -153,6 +170,7 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         return true
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun eliminarCurso(curso: Curso) {
         lifecycleScope.launch {
             val cursos = cursoRepository.listarCursos().toMutableList()
@@ -164,66 +182,105 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     private fun mostrarDialogCurso(curso: Curso?) {
         val dialogBinding = DialogCursoBinding.inflate(layoutInflater)
-        curso?.let {
-            dialogBinding.etNombreCurso.setText(it.nombre)
-            dialogBinding.etCreditos.setText(it.creditos.toString())
-            dialogBinding.etHorasSemanales.setText(it.horasSemanales.toString())
-        }
 
-        AlertDialog.Builder(requireContext())
-            .setTitle(if (curso == null) "Agregar Curso" else "Editar Curso")
-            .setView(dialogBinding.root)
-            .setPositiveButton("Guardar") { _, _ ->
-                val nombre = dialogBinding.etNombreCurso.text.toString()
-                val creditos = dialogBinding.etCreditos.text.toString().toIntOrNull() ?: 0
-                val horas = dialogBinding.etHorasSemanales.text.toString().toIntOrNull() ?: 0
+        lifecycleScope.launch {
+            val listaCarreras = carreraRepository.listarCarreras()
+            val listaCiclos = cicloRepository.listarCiclos()
+            val listaCarrerasCursos = carrerasCursosRepository.listarCarrerasCursos()
 
-                lifecycleScope.launch {
-                    if (curso == null) {
-                        val nuevoCurso =
-                            Curso(cursoRepository.generarCodigoCurso(), nombre, creditos, horas)
-                        try {
-                            val exito = cursoRepository.agregarCursoRemoto(nuevoCurso)
-                            if (exito) {
+            val carreraAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaCarreras)
+            carreraAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            dialogBinding.etSpinnerCarreraCurso.adapter = carreraAdapter
+
+            val cicloAdapter = ArrayAdapter(requireContext(), android.R.layout.simple_spinner_item, listaCiclos)
+            cicloAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+            dialogBinding.etSpinnerCicloCurso.adapter = cicloAdapter
+
+            // Prellenar campos si hay curso
+            curso?.let {
+                dialogBinding.etNombreCurso.setText(it.nombre)
+                dialogBinding.etCreditos.setText(it.creditos.toString())
+                dialogBinding.etHorasSemanales.setText(it.horasSemanales.toString())
+
+                val relacion = listaCarrerasCursos.firstOrNull()
+
+                if (relacion != null) {
+                    val idxCarrera = listaCarreras.indexOfFirst { c -> c.codigoCarrera == relacion.codigoCarrera }
+                    if (idxCarrera != -1) dialogBinding.etSpinnerCarreraCurso.setSelection(idxCarrera)
+
+                    val idxCiclo = listaCiclos.indexOfFirst { c -> c.cicloId == relacion.ciclo }
+                    if (idxCiclo != -1) dialogBinding.etSpinnerCicloCurso.setSelection(idxCiclo)
+                } else {
+                    dialogBinding.etSpinnerCarreraCurso.setSelection(0)
+                    dialogBinding.etSpinnerCicloCurso.setSelection(0)
+                }
+            }
+
+            AlertDialog.Builder(requireContext())
+                .setTitle(if (curso == null) "Agregar Curso" else "Editar Curso")
+                .setView(dialogBinding.root)
+                .setPositiveButton("Guardar") { _, _ ->
+                    val nombre = dialogBinding.etNombreCurso.text.toString()
+                    val creditos = dialogBinding.etCreditos.text.toString().toIntOrNull() ?: 0
+                    val horas = dialogBinding.etHorasSemanales.text.toString().toIntOrNull() ?: 0
+                    val carrera = listaCarreras[dialogBinding.etSpinnerCarreraCurso.selectedItemPosition]
+                    val ciclo = listaCiclos[dialogBinding.etSpinnerCicloCurso.selectedItemPosition]
+
+                    lifecycleScope.launch {
+                        if (curso == null) {
+                            val nuevoCurso = Curso(cursoRepository.generarCodigoCurso(), nombre, creditos, horas)
+                            try {
+                                val exito = cursoRepository.agregarCursoRemoto(nuevoCurso)
+                                if (exito) {
+                                    carrerasCursosRepository.agregarCarreraCurso(CarreraCurso(
+                                        null,
+                                        carrera.codigoCarrera,
+                                        nuevoCurso.codigoCurso,
+                                        ciclo.anio,
+                                        ciclo.cicloId,
+                                        1
+                                    ))
+                                    withContext(Dispatchers.Main) {
+                                        Toast.makeText(requireContext(), "Curso agregado", Toast.LENGTH_SHORT).show()
+                                        cargarCursos()
+                                    }
+                                }
+                            } catch (e: Exception) {
                                 withContext(Dispatchers.Main) {
-                                    Toast.makeText(
-                                        requireContext(),
-                                        "Curso agregado",
-                                        Toast.LENGTH_SHORT
-                                    ).show()
-                                    cargarCursos()
+                                    Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
                                 }
                             }
-                        } catch (e: Exception) {
-                            withContext(Dispatchers.Main) {
-                                Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT)
-                                    .show()
+                        } else {
+                            val cursosActualizados = cursoRepository.listarCursos().map {
+                                if (it.codigoCurso == curso.codigoCurso) {
+                                    Curso(curso.codigoCurso, nombre, creditos, horas)
+                                } else it
                             }
-                        }
-                    } else {
-                        val cursosActualizados = cursoRepository.listarCursos().map {
-                            if (it.codigoCurso == curso.codigoCurso) Curso(
+                            cursoRepository.setCursos(cursosActualizados)
+
+                            val carreraCurso = carrerasCursosRepository.listarCarrerasCursos().first { it.codigoCurso == curso.codigoCurso }
+
+                            carrerasCursosRepository.setCarrerasCursos(listOf(CarreraCurso(
+                                carreraCurso.carreraCursoId,
+                                carrera.codigoCarrera,
                                 curso.codigoCurso,
-                                nombre,
-                                creditos,
-                                horas
-                            ) else it
-                        }
-                        cursoRepository.setCursos(cursosActualizados)
-                        withContext(Dispatchers.Main) {
-                            adapter.actualizarLista(cursosActualizados.toMutableList())
-                            Toast.makeText(
-                                requireContext(),
-                                "Curso actualizado",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                                ciclo.anio,
+                                ciclo.cicloId,
+                                carreraCurso.orden
+                            )))
+
+                            withContext(Dispatchers.Main) {
+                                adapter.actualizarLista(cursosActualizados.toMutableList())
+                                Toast.makeText(requireContext(), "Curso actualizado", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
                 }
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+                .setNegativeButton("Cancelar", null)
+                .show()
+        }
     }
 }

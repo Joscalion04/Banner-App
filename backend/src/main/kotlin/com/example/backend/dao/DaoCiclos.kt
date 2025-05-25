@@ -34,8 +34,8 @@ class DaoCiclos : Dao(){
             pstmt?.setInt(2, ciclo.getNumero())
 
             // Conversión correcta de fechas
-            pstmt?.setDate(3, java.sql.Date(ciclo.getFechaInicio().time))
-            pstmt?.setDate(4, java.sql.Date(ciclo.getFechaFin().time))
+            pstmt?.setDate(3, Date.valueOf(ciclo.getFechaInicio()))
+            pstmt?.setDate(4, Date.valueOf(ciclo.getFechaFin()))
 
             // Corrección clave: Convertir boolean a número (1/0)
             pstmt?.setInt(5, if (ciclo.isActivo()) 1 else 0)
@@ -77,8 +77,8 @@ class DaoCiclos : Dao(){
                         rs.getInt("ciclo_id"),
                         rs.getInt("anio"),
                         rs.getInt("numero"),
-                        rs.getDate("fecha_inicio"),
-                        rs.getDate("fecha_fin"),
+                        rs.getDate("fecha_inicio").toLocalDate(),
+                        rs.getDate("fecha_fin").toLocalDate(),
                         rs.getBoolean("activo")
                     )
                 )
@@ -116,8 +116,8 @@ class DaoCiclos : Dao(){
             // Orden exacto de parámetros según el procedure:
             pstmt?.setInt(1, ciclo.getAnio())          // P_ANIO
             pstmt?.setInt(2, ciclo.getNumero())        // P_NUMERO
-            pstmt?.setDate(3, java.sql.Date(ciclo.getFechaInicio().time))  // P_FECHA_INICIO
-            pstmt?.setDate(4, java.sql.Date(ciclo.getFechaFin().time))     // P_FECHA_FIN
+            pstmt?.setDate(3, Date.valueOf(ciclo.getFechaInicio()))  // P_FECHA_INICIO
+            pstmt?.setDate(4, Date.valueOf(ciclo.getFechaFin()))     // P_FECHA_FIN
             pstmt?.setInt(5, if (ciclo.isActivo()) 1 else 0)  // P_ACTIVO (convertido a NUMBER)
 
             val resultado = pstmt?.executeUpdate()
@@ -188,8 +188,8 @@ class DaoCiclos : Dao(){
                         rs.getInt("ciclo_id"),
                         rs.getInt("anio"),
                         rs.getInt("numero"),
-                        rs.getDate("fecha_inicio"),
-                        rs.getDate("fecha_fin"),
+                        rs.getDate("fecha_inicio").toLocalDate(),
+                        rs.getDate("fecha_fin").toLocalDate(),
                         rs.getInt("activo") == 1 // Convertir NUMBER (1/0) a boolean
                     )
                 )

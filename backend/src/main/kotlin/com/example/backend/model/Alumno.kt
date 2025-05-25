@@ -6,6 +6,7 @@
 package com.example.backend.model
 
 import jakarta.persistence.*
+import java.time.LocalDate
 import java.util.Date
 
 @Entity
@@ -25,14 +26,14 @@ class Alumno {
     private var email: String = ""
 
     @Column(name = "FECHA_NACIMIENTO", nullable = false)
-    private var fechaNacimiento: Date = Date()
+    private var fechaNacimiento: LocalDate = LocalDate.now()
 
     @Column(name = "CODIGO_CARRERA", length = 20, nullable = false)
     private var codigoCarrera: String = ""
 
     constructor() {}
 
-    constructor(cedula: String, nombre: String, telefono: String?, email: String, fechaNacimiento: Date, codigoCarrera: String) {
+    constructor(cedula: String, nombre: String, telefono: String?, email: String, fechaNacimiento: LocalDate, codigoCarrera: String) {
         this.cedula = cedula
         this.nombre = nombre
         this.telefono = telefono
@@ -74,11 +75,11 @@ class Alumno {
         this.email = email
     }
 
-    fun getFechaNacimiento(): Date {
+    fun getFechaNacimiento(): LocalDate {
         return fechaNacimiento
     }
 
-    fun setFechaNacimiento(fechaNacimiento: Date) {
+    fun setFechaNacimiento(fechaNacimiento: LocalDate) {
         this.fechaNacimiento = fechaNacimiento
     }
 

@@ -34,5 +34,27 @@
             android:text="@string/_3_cr_ditos_4_hrs_semana"
             android:textAppearance="@style/TextAppearance.AppCompat.Small" />
 
+        <Spinner
+            android:id="@+id/tvSpinnerCarreraCurso"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:spinnerMode="dropdown"
+            android:focusable="false"
+            android:clickable="false"
+            android:focusableInTouchMode="false"
+            android:enabled="false"
+            android:layout_marginTop="8dp"/>
+
+        <Spinner
+            android:id="@+id/tvSpinnerCicloCurso"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:spinnerMode="dropdown"
+            android:focusable="false"
+            android:clickable="false"
+            android:focusableInTouchMode="false"
+            android:enabled="false"
+            android:layout_marginTop="8dp"/>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

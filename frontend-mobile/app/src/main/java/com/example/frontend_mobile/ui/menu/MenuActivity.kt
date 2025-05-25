@@ -13,7 +13,9 @@ import com.example.frontend_mobile.R
 import com.example.frontend_mobile.data.LoginDataSource
 import com.example.frontend_mobile.data.SessionManager
 import com.example.frontend_mobile.data.repository.LoginRepository
+import com.example.frontend_mobile.ui.alumnos.AlumnoFragment
 import com.example.frontend_mobile.ui.carreras.CarreraFragment
+import com.example.frontend_mobile.ui.ciclos.CicloFragment
 import com.example.frontend_mobile.ui.cursos.CursoFragment
 import com.example.frontend_mobile.ui.login.LoginActivity
 import com.example.frontend_mobile.ui.profesores.ProfesorFragment
@@ -87,9 +89,21 @@ class MenuActivity : AppCompatActivity() {
                         .addToBackStack(null)
                         .commit()
                 }
-//                else -> {
-//                    false
-//                }
+                R.id.alumnos -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, AlumnoFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+                R.id.ciclos -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, CicloFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+                else -> {
+                    false
+                }
             }
             drawerLayout.closeDrawer(GravityCompat.START)
             true

@@ -6,7 +6,9 @@
 
 package com.example.backend.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import jakarta.persistence.*
+import java.time.LocalDate
 import java.util.Date
 
 @Entity
@@ -24,17 +26,18 @@ class Ciclo {
     private var numero: Int = 0
 
     @Column(name = "FECHA_INICIO", nullable = false)
-    private var fechaInicio: Date = Date()
+    private var fechaInicio: LocalDate = LocalDate.now()
 
     @Column(name = "FECHA_FIN", nullable = false)
-    private var fechaFin: Date = Date()
+    private var fechaFin: LocalDate = LocalDate.now()
 
     @Column(name = "ACTIVO", nullable = false)
+    @JsonProperty("isActivo")
     private var activo: Boolean = false
 
     constructor() {}
 
-    constructor(cicloId: Int, anio: Int, numero: Int, fechaInicio: Date, fechaFin: Date, activo: Boolean = false) {
+    constructor(cicloId: Int, anio: Int, numero: Int, fechaInicio: LocalDate, fechaFin: LocalDate, activo: Boolean = false) {
         this.cicloId = cicloId
         this.anio = anio
         this.numero = numero
@@ -72,19 +75,19 @@ class Ciclo {
         }
     }
 
-    fun getFechaInicio(): Date {
+    fun getFechaInicio(): LocalDate {
         return fechaInicio
     }
 
-    fun setFechaInicio(fechaInicio: Date) {
+    fun setFechaInicio(fechaInicio: LocalDate) {
         this.fechaInicio = fechaInicio
     }
 
-    fun getFechaFin(): Date {
+    fun getFechaFin(): LocalDate {
         return fechaFin
     }
 
-    fun setFechaFin(fechaFin: Date) {
+    fun setFechaFin(fechaFin: LocalDate) {
         this.fechaFin = fechaFin
     }
 

@@ -25,10 +25,10 @@ class ProfesorAdapter(
     inner class ProfesorViewHolder(val binding: ItemProfesorCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(profesor: Profesor) {
-            binding.tvCedulaProfesor.text = profesor.cedula
-            binding.tvNombreProfesor.text = profesor.nombre
-            binding.tvTelefonoProfesor.text = profesor.telefono
-            binding.tvEmailProfesor.text = profesor.email
+            binding.tvCedulaProfesor.text = "Cédula: " + profesor.cedula
+            binding.tvNombreProfesor.text = "Nombre: " + profesor.nombre
+            binding.tvTelefonoProfesor.text = "Teléfono: " + profesor.telefono
+            binding.tvEmailProfesor.text = "Correo: " + profesor.email
             binding.root.setOnClickListener { listener.onProfesorClick(profesor) }
             binding.root.setOnLongClickListener { listener.onProfesorLongClick(profesor) }
         }
