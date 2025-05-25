@@ -21,6 +21,11 @@ Aplicación web para la gestión académica de estudiantes, inspirada en sistema
   - CSS Modules
   - Fetch API
 
+## 📁 Arquitectura
+
+![Arquitectura del sistema](https://raw.githubusercontent.com/Joscalion04/Banner-App/main/frontend-web/FrontendWeb_Arquitectura.png)
+
+
 ## 📁 Estructura del Proyecto
 
 ```plaintext
@@ -56,3 +61,6 @@ frontend-web/
    git clone 
    cd frontend-web
    npm install
+   ```
+
+
