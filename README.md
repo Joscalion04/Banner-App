@@ -7,6 +7,7 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 - 🌐 Frontend web en **React.js**
 - 📱 App móvil en **Android Studio** con **XML Views**
 
+# 🎓 Arquitectura del sistema
 ![Arquitectura del sistema](https://raw.githubusercontent.com/Joscalion04/Banner-App/main/Arquitectura_Banner.png)
 
 ---
@@ -63,3 +64,7 @@ Repositorio principal del ecosistema **Banner-App**, una solución académica in
 - XML + Navigation Components
 
 ---
+
+# 🎓 Esquema de Flujo
+![Esquema de Flujo](Esquema.png)
+
