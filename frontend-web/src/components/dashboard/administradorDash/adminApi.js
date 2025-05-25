@@ -9,12 +9,25 @@ export const fetchApi = async (endpoint, options = {}) => {
         ...options
     });
     
-    if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || `Error ${response.status}`);
+    const textResponse = await response.text(); // Primero obtener como texto
+
+    try {
+        // Intentar parsear como JSON
+        const data = textResponse ? JSON.parse(textResponse) : null;
+        
+        if (!response.ok) {
+            const errorMsg = data?.message || textResponse || `Error ${response.status}`;
+            throw new Error(errorMsg);
+        }
+        
+        return data || { success: true, message: textResponse };
+    } catch (e) {
+        // Si falla el parseo JSON pero la respuesta fue exitosa
+        if (response.ok) {
+            return { success: true, message: textResponse };
+        }
+        throw new Error(textResponse || `Error ${response.status}`);
     }
-    
-    return response.json();
 };
 
 // CRUD para Carreras
