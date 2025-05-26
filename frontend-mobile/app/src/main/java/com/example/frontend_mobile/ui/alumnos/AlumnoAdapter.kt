@@ -19,11 +19,6 @@ class AlumnoAdapter(
     private val alumnoRepository: AlumnoRepository
 ) : RecyclerView.Adapter<AlumnoAdapter.AlumnoViewHolder>() {
 
-    interface OnAlumnoClickListener {
-        fun onAlumnoClick(alumno: Alumno)
-        fun onAlumnoLongClick(alumno: Alumno): Boolean
-    }
-
     inner class AlumnoViewHolder(val binding: ItemAlumnoCardBinding) :
         RecyclerView.ViewHolder(binding.root) {
         fun bind(alumno: Alumno) {
@@ -31,11 +26,23 @@ class AlumnoAdapter(
             binding.tvNombreAlumno.text = "Nombre: " + alumno.nombre
             binding.tvTelefonoAlumno.text = "Teléfono: " + alumno.telefono
             binding.tvEmailAlumno.text = "Correo: " + alumno.email
-            binding.tvFechaNacimientoAlumno.text = Editable.Factory.getInstance().newEditable("Fecha de nacimiento: " + alumno.fechaNacimiento)
+            binding.tvFechaNacimientoAlumno.text =
+                Editable.Factory.getInstance().newEditable("Fecha de nacimiento: " + alumno.fechaNacimiento)
             binding.tvCodigoCarreraAlumno.text = "Carrera: " + alumno.codigoCarrera
+
             binding.root.setOnClickListener { listener.onAlumnoClick(alumno) }
             binding.root.setOnLongClickListener { listener.onAlumnoLongClick(alumno) }
+
+            binding.btnMatricular.setOnClickListener { listener.onMatricularClick(alumno) }
+            binding.btnConsultarHistorial.setOnClickListener { listener.onConsultarHistorialClick(alumno) }
         }
+    }
+
+    interface OnAlumnoClickListener {
+        fun onAlumnoClick(alumno: Alumno)
+        fun onAlumnoLongClick(alumno: Alumno): Boolean
+        fun onMatricularClick(alumno: Alumno)
+        fun onConsultarHistorialClick(alumno: Alumno)
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlumnoViewHolder {

@@ -10,13 +10,12 @@ import androidx.core.view.GravityCompat
 import androidx.drawerlayout.widget.DrawerLayout
 import com.google.android.material.navigation.NavigationView
 import com.example.frontend_mobile.R
-import com.example.frontend_mobile.data.LoginDataSource
 import com.example.frontend_mobile.data.SessionManager
-import com.example.frontend_mobile.data.repository.LoginRepository
 import com.example.frontend_mobile.ui.alumnos.AlumnoFragment
 import com.example.frontend_mobile.ui.carreras.CarreraFragment
 import com.example.frontend_mobile.ui.ciclos.CicloFragment
 import com.example.frontend_mobile.ui.cursos.CursoFragment
+import com.example.frontend_mobile.ui.grupos.GrupoFragment
 import com.example.frontend_mobile.ui.login.LoginActivity
 import com.example.frontend_mobile.ui.profesores.ProfesorFragment
 
@@ -98,6 +97,12 @@ class MenuActivity : AppCompatActivity() {
                 R.id.ciclos -> {
                     supportFragmentManager.beginTransaction()
                         .replace(R.id.fragment_container, CicloFragment())
+                        .addToBackStack(null)
+                        .commit()
+                }
+                R.id.oferta -> {
+                    supportFragmentManager.beginTransaction()
+                        .replace(R.id.fragment_container, GrupoFragment())
                         .addToBackStack(null)
                         .commit()
                 }

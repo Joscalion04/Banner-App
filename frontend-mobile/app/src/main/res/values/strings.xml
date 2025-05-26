@@ -54,4 +54,5 @@
     <string name="ciclo_activo">Ciclo Activo</string>
     <string name="ciclo_id">Ciclo ID</string>
     <string name="consultar_historial">Consultar Historial</string>
+    <string name="agregar_oferta">Agregar Oferta</string>
 </resources>

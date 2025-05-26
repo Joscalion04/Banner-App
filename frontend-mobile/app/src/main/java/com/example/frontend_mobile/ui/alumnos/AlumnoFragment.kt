@@ -18,7 +18,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.data.model.Alumno
 import com.example.frontend_mobile.data.repository.AlumnoRepository
+import com.example.frontend_mobile.data.repository.HistorialRepository
 import com.example.frontend_mobile.databinding.DialogAlumnoBinding
+import com.example.frontend_mobile.databinding.DialogHistorialBinding
 import com.example.frontend_mobile.databinding.FragmentAlumnosBinding
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -177,6 +179,72 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener {
                 Toast.makeText(requireContext(), "Alumno eliminada", Toast.LENGTH_SHORT).show()
             }
         }
+    }
+
+    override fun onMatricularClick(alumno: Alumno) {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Matricular Alumno")
+            .setMessage("¿Desea matricular a ${alumno.nombre}?")
+            .setPositiveButton("Sí") { _, _ ->
+                Toast.makeText(requireContext(), "${alumno.nombre} matriculado", Toast.LENGTH_SHORT).show()
+                // Aquí podrías lanzar un nuevo diálogo con más opciones o lógica
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onConsultarHistorialClick(alumno: Alumno) {
+        mostrarDialogHistorial(alumno)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun mostrarDialogHistorial(alumno: Alumno) {
+        val dialogBinding = DialogHistorialBinding.inflate(layoutInflater)
+
+        // Configurar el RecyclerView
+        val historialAdapter = HistorialAdapter(mutableListOf())
+        dialogBinding.recyclerViewHistorial.layoutManager = LinearLayoutManager(requireContext())
+        dialogBinding.recyclerViewHistorial.adapter = historialAdapter
+
+        // Actualizar el título con el nombre del alumno
+        dialogBinding.tvTituloHistorial.text = "Historial de ${alumno.nombre}"
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Historial Académico")
+            .setView(dialogBinding.root)
+            .setPositiveButton("Cerrar", null)
+            .create()
+
+        // Cargar el historial del alumno
+        lifecycleScope.launch {
+            try {
+                val historial = HistorialRepository.obtenerHistorialAlumno(alumno.cedula)
+                withContext(Dispatchers.Main) {
+                    if (historial.isNotEmpty()) {
+                        historialAdapter.actualizarLista(historial)
+                    } else {
+                        // Mostrar mensaje cuando no hay historial
+                        Toast.makeText(
+                            requireContext(),
+                            "No se encontró historial para ${alumno.nombre}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error al cargar el historial: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        dialog.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)

@@ -188,6 +188,7 @@ class Service(
     override fun insertarProfesor(profesor: Profesor) {
         try {
             daoProfesores.insertarProfesor(profesor)
+            daoUsuarios.insertarUsuario(Usuario(profesor.getCedula(), profesor.getCedula(), Usuario.TIPO_PROFESOR))
             socketHandler.notificarCambio("profesor", "insertar", profesor.getCedula())
         } catch (e: Exception) {
             throw e
@@ -241,6 +242,7 @@ class Service(
     override fun insertarAlumno(alumno: Alumno) {
         try {
             daoAlumnos.insertarAlumno(alumno)
+            daoUsuarios.insertarUsuario(Usuario(alumno.getCedula(), alumno.getCedula(), Usuario.TIPO_ALUMNO))
             socketHandler.notificarCambio("alumno", "insertar", alumno.getCedula())
         } catch (e: Exception) {
             throw e

@@ -5,4 +5,8 @@ data class Curso(
     val nombre: String,
     val creditos: Int,
     val horasSemanales: Int
-)
+) {
+    override fun toString(): String {
+        return nombre
+    }
+}
