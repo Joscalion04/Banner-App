@@ -648,3 +648,12 @@ body, html {
 .showPasswordBtn:hover {
   background: #e0e0e0;
 }
+
+/* CareerCourses Table */
+.careerCoursesTable th:nth-child(1) { width: 8%; }
+.careerCoursesTable th:nth-child(2) { width: 22%; }
+.careerCoursesTable th:nth-child(3) { width: 22%; }
+.careerCoursesTable th:nth-child(4) { width: 10%; }
+.careerCoursesTable th:nth-child(5) { width: 10%; }
+.careerCoursesTable th:nth-child(6) { width: 10%; }
+.careerCoursesTable th:nth-child(7) { width: 18%; }

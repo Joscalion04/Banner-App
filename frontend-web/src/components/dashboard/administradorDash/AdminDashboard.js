@@ -8,6 +8,7 @@ import CoursesSection from './components/CoursesSection';
 import CyclesSection from './components/CyclesSection';
 import GroupsSection from './components/GroupsSection';
 import CareersSection from './components/CareersSection';
+import CareerCourseSection from './components/CareerCourseSection';
 import UsersSection from './components/UsersSection';
 import useAdminData from './hooks/useAdminData';
 
@@ -19,7 +20,7 @@ const AdminDashboard = ({ user , onLogout}) => {
         teachers, students, courses, academicCycles, groups,
         careers, users, careerCourses, loading, error,
         handleDeleteTeacher, handleDeleteStudent, handleDeleteCourse,
-        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer, handleDeleteUser
+        handleDeleteCycle, handleDeleteGroup, handleDeleteCareer, handleDeleteUser, handleDeleteCareerCourse
     } = useAdminData();
 
     const renderCRUDSection = () => {
@@ -65,6 +66,13 @@ const AdminDashboard = ({ user , onLogout}) => {
                 return <CareersSection 
                     careers={careers} 
                     onDelete={handleDeleteCareer} 
+                />;
+            case 'careerCourses':
+                return <CareerCourseSection 
+                    careerCourses={careerCourses} 
+                    careers={careers}
+                    courses={courses}
+                    onDelete={handleDeleteCareerCourse} 
                 />;
             default:
                 return <DashboardOverview 

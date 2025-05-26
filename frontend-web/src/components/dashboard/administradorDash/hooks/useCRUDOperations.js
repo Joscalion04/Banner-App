@@ -44,6 +44,53 @@ const useCRUDOperations = (entityType, {
                 `;
                 break;
 
+
+            case 'careerCourses':
+                    const careerOptionsToCourse = careers.map(c => 
+                        `<option value="${c.codigoCarrera}" ${formData.codigoCarrera === c.codigoCarrera ? 'selected' : ''}>
+                        ${c.nombre} (${c.codigoCarrera})
+                        </option>`
+                    ).join('');
+
+                    const courseOptionstoCareer = courses.map(c => 
+                        `<option value="${c.codigoCurso}" ${formData.codigoCurso === c.codigoCurso ? 'selected' : ''}>
+                        ${c.nombre} (${c.codigoCurso})
+                        </option>`
+                    ).join('');
+
+                    formHTML = `
+                        <div class="sweet-form-group">
+                        <label>Carrera:</label>
+                        <select id="swal-codigoCarrera" class="swal2-input" required>
+                            <option value="">Seleccione una carrera</option>
+                            ${careerOptionsToCourse}
+                        </select>
+                        </div>
+                        <div class="sweet-form-group">
+                        <label>Curso:</label>
+                        <select id="swal-codigoCurso" class="swal2-input" required>
+                            <option value="">Seleccione un curso</option>
+                            ${courseOptionstoCareer}
+                        </select>
+                        </div>
+                        <div class="sweet-form-group">
+                        <label>Año:</label>
+                        <input type="number" id="swal-anio" class="swal2-input" 
+                            value="${formData.anio || ''}" placeholder="Año" required>
+                        </div>
+                        <div class="sweet-form-group">
+                        <label>Ciclo:</label>
+                        <input type="number" id="swal-ciclo" class="swal2-input" 
+                            value="${formData.ciclo || ''}" placeholder="Ciclo" required min="1" max="3">
+                        </div>
+                        <div class="sweet-form-group">
+                        <label>Orden:</label>
+                        <input type="number" id="swal-orden" class="swal2-input" 
+                            value="${formData.orden || ''}" placeholder="Orden" required>
+                        </div>
+                    `;
+                    break;
+
             case 'users':
                 formHTML = `
                     <div class="sweet-form-group">
@@ -153,7 +200,6 @@ const useCRUDOperations = (entityType, {
                             <option value="">Seleccione</option>
                             <option value="1" ${numeroSelected === '1' ? 'selected' : ''}>1</option>
                             <option value="2" ${numeroSelected === '2' ? 'selected' : ''}>2</option>
-                            <option value="3" ${numeroSelected === '3' ? 'selected' : ''}>3</option>
                         </select>
                     </div>
                     <div class="sweet-form-group">
@@ -169,42 +215,51 @@ const useCRUDOperations = (entityType, {
 
             case 'groups':
                 const courseOptions = courses.map(c => 
-                    `<option value="${c.codigoCurso}" ${formData.codigoCurso === c.codigoCurso ? 'selected' : ''}>${c.nombre}</option>`
+                    `<option value="${c.codigoCurso}" ${formData.codigoCurso === c.codigoCurso ? 'selected' : ''}>${c.nombre} : ${c.codigoCurso}</option>`
                 ).join('');
                 
                 const teacherOptions = teachers.map(t => 
                     `<option value="${t.cedula}" ${formData.cedulaProfesor === t.cedula ? 'selected' : ''}>${t.nombre}</option>`
                 ).join('');
                 
+                // Asumiendo que academicCycles ahora incluye un campo 'id'
                 const cycleOptions = academicCycles.map(c => 
-                    `<option value="${c.anio}" ${formData.anio === c.anio ? 'selected' : ''}>${c.anio}-${c.numero}</option>`
+                    `<option value="${c.numero}" ${formData.cicloId === c.numero ? 'selected' : ''}>
+                    ${c.anio}-${c.numero}
+                    </option>`
                 ).join('');
                 
                 formHTML = `
                     <div class="sweet-form-group">
-                        <label>Curso:</label>
-                        <select id="swal-codigoCurso" class="swal2-input" required>
-                            <option value="">Seleccione un curso</option>
-                            ${courseOptions}
-                        </select>
+                    <label>Número de Grupo:</label>
+                    <input type="number" id="swal-numeroGrupo" class="swal2-input" 
+                            value="${formData.numeroGrupo || ''}" placeholder="Número de grupo" required>
                     </div>
                     <div class="sweet-form-group">
-                        <label>Profesor:</label>
-                        <select id="swal-cedulaProfesor" class="swal2-input" required>
-                            <option value="">Seleccione un profesor</option>
-                            ${teacherOptions}
-                        </select>
+                    <label>Curso:</label>
+                    <select id="swal-codigoCurso" class="swal2-input" required>
+                        <option value="">Seleccione un curso</option>
+                        ${courseOptions}
+                    </select>
                     </div>
                     <div class="sweet-form-group">
-                        <label>Ciclo:</label>
-                        <select id="swal-anio" class="swal2-input" required>
-                            <option value="">Seleccione un ciclo</option>
-                            ${cycleOptions}
-                        </select>
+                    <label>Profesor:</label>
+                    <select id="swal-cedulaProfesor" class="swal2-input" required>
+                        <option value="">Seleccione un profesor</option>
+                        ${teacherOptions}
+                    </select>
                     </div>
                     <div class="sweet-form-group">
-                        <label>Horario:</label>
-                        <input type="text" id="swal-horario" class="swal2-input" value="${formData.horario || ''}" placeholder="Horario" required>
+                    <label>Ciclo Académico:</label>
+                    <select id="swal-cicloId" class="swal2-input" required>
+                        <option value="">Seleccione un ciclo</option>
+                        ${cycleOptions}
+                    </select>
+                    </div>
+                    <div class="sweet-form-group">
+                    <label>Horario:</label>
+                    <input type="text" id="swal-horario" class="swal2-input" 
+                            value="${formData.horario || ''}" placeholder="Ej: Lunes 8-10, Miércoles 10-12" required>
                     </div>
                 `;
                 break;
@@ -229,7 +284,19 @@ const useCRUDOperations = (entityType, {
                         telefono: document.getElementById('swal-telefono').value
                     };
                     break;
-                    
+                
+
+                case 'careerCourses':
+                    formData = {
+                        codigoCarrera: document.getElementById('swal-codigoCarrera').value,
+                        codigoCurso: document.getElementById('swal-codigoCurso').value,
+                        anio: parseInt(document.getElementById('swal-anio').value),
+                        ciclo: parseInt(document.getElementById('swal-ciclo').value),
+                        orden: parseInt(document.getElementById('swal-orden').value),
+                        carreraCursoId: isEditing ? originalData.carreraCursoId : undefined
+                    };
+                    break;
+
                 case 'students':
                     formData = {
                         cedula: document.getElementById('swal-cedula').value,
@@ -275,18 +342,18 @@ const useCRUDOperations = (entityType, {
                     break;
                     
                 case 'groups':
-                    const selectedCycle = academicCycles.find(c => 
-                        c.anio === parseInt(document.getElementById('swal-anio').value)
-                    );
-                    
                     formData = {
+                        cicloId: parseInt(document.getElementById('swal-cicloId').value),
                         codigoCurso: document.getElementById('swal-codigoCurso').value,
-                        cedulaProfesor: document.getElementById('swal-cedulaProfesor').value,
-                        anio: selectedCycle?.anio,
-                        numeroCiclo: selectedCycle?.numero,
+                        numeroGrupo: parseInt(document.getElementById('swal-numeroGrupo').value),
                         horario: document.getElementById('swal-horario').value,
-                        grupoId: isEditing ? originalData.grupoId : undefined
+                        cedulaProfesor: document.getElementById('swal-cedulaProfesor').value
                     };
+                    
+                    // Eliminamos grupoId del objeto si estamos editando (dependiendo de tu API)
+                    if (isEditing && originalData.grupoId) {
+                        formData.grupoId = originalData.grupoId;
+                    }
                     break;
                     
                 default:
@@ -317,7 +384,13 @@ const useCRUDOperations = (entityType, {
                         result = await adminApi.insertarCurso(formData);
                     }
                     break;
-                
+                case 'careerCourses':
+                    if (isEditing) {
+                        await adminApi.actualizarCarreraCurso(formData);
+                    } else {
+                        result = await adminApi.insertarCarreraCurso(formData);
+                    }
+                    break;
                 case 'careers':
                     if (isEditing) {
                         await adminApi.actualizarCarrera(formData);
@@ -337,6 +410,7 @@ const useCRUDOperations = (entityType, {
                     if (isEditing) {
                         await adminApi.actualizarGrupo(formData);
                     } else {
+                        console.log(formData);
                         result = await adminApi.insertarGrupo(formData);
                     }
                     break;
