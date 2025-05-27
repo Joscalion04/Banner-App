@@ -1,83 +1,116 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp"
-    android:layout_margin="8dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="#FFFFFF"
+    app:cardUseCompatPadding="true"
+    android:layout_margin="8dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp"
+        android:background="?attr/selectableItemBackground">
 
+        <!-- TextViews con estilo mejorado -->
         <TextView
             android:id="@+id/tvCedulaAlumno"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/c_dula_del_alumno"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#212121"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/tvNombreAlumno"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/nombre_del_alumno"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#424242"
+            android:textSize="15sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/tvTelefonoAlumno"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/tel_fono_del_alumno"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#424242"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/tvEmailAlumno"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/email_del_alumno"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#424242"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/tvFechaNacimientoAlumno"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             tools:ignore="LabelFor"
-            android:autofillHints=""
             android:text="@string/fecha_de_nacimiento_del_alumno"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#424242"
+            android:textSize="14sp"
+            android:layout_marginBottom="4dp"/>
 
         <TextView
             android:id="@+id/tvCodigoCarreraAlumno"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/c_digo_de_la_carrera"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#424242"
+            android:textSize="14sp"
+            android:layout_marginBottom="12dp"/>
 
-        <!-- Botones con igual tamaño (50% cada uno) -->
+        <!-- Botones con estilo mejorado -->
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:orientation="horizontal"
-            android:layout_marginTop="8dp">
+            android:layout_marginTop="8dp"
+            android:divider="@android:drawable/divider_horizontal_dark"
+            android:showDividers="middle"
+            android:dividerPadding="8dp">
 
             <Button
                 android:id="@+id/btnMatricular"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="Matricular" />
+                android:layout_marginEnd="4dp"
+                android:text="Matricular"
+                android:backgroundTint="#6200EE"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"/>
 
             <Button
                 android:id="@+id/btnConsultarHistorial"
                 android:layout_width="0dp"
-                android:layout_height="wrap_content"
+                android:layout_height="40dp"
                 android:layout_weight="1"
-                android:text="@string/consultar_historial" />
+                android:layout_marginStart="4dp"
+                android:text="@string/consultar_historial"
+                android:backgroundTint="#03DAC6"
+                android:textColor="#FFFFFF"
+                android:textAllCaps="false"
+                android:elevation="0dp"
+                android:stateListAnimator="@null"/>
 
         </LinearLayout>
 

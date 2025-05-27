@@ -1,69 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:card_view="http://schemas.android.com/apk/res-auto"
+<androidx.cardview.widget.CardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    card_view:cardCornerRadius="8dp"
-    card_view:cardElevation="4dp"
-    android:layout_margin="8dp">
+    app:cardCornerRadius="12dp"
+    app:cardElevation="6dp"
+    app:cardBackgroundColor="#FFFFFF"
+    android:layout_margin="8dp"
+    android:foreground="?android:attr/selectableItemBackground">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:padding="16dp">
 
+        <!-- ID oculto (mantenido igual) -->
         <TextView
             android:id="@+id/tvCicloID"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:visibility="gone"
-            android:text="@string/ciclo_id"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:text="@string/ciclo_id"/>
 
+        <!-- Año del ciclo - Destacado -->
         <TextView
             android:id="@+id/tvAnioCiclo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/anio_ciclo"
-            android:textAppearance="@style/TextAppearance.AppCompat.Medium" />
+            android:textColor="#6200EE"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
 
+        <!-- Número de ciclo -->
         <TextView
             android:id="@+id/tvNumeroCiclo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/n_mero_de_ciclo"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small" />
+            android:textColor="#212121"
+            android:textSize="15sp"
+            android:layout_marginBottom="4dp"/>
 
-        <TextView
-            android:id="@+id/tvFechaInicioCiclo"
-            android:layout_width="wrap_content"
+        <!-- Fechas -->
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:autofillHints=""
-            android:text="@string/fecha_de_inicio"
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"
-            tools:ignore="LabelFor" />
+            android:orientation="horizontal"
+            android:layout_marginBottom="4dp">
 
-        <TextView
-            android:id="@+id/tvFechaFinCiclo"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="@string/fecha_de_fin"
-            tools:ignore="LabelFor"
-            android:autofillHints=""
-            android:textAppearance="@style/TextAppearance.AppCompat.Small"/>
+            <TextView
+                android:id="@+id/tvFechaInicioCiclo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fecha_de_inicio"
+                android:textColor="#616161"
+                android:textSize="14sp"
+                tools:ignore="LabelFor"/>
 
+            <TextView
+                android:id="@+id/tvFechaFinCiclo"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/fecha_de_fin"
+                android:textColor="#616161"
+                android:textSize="14sp"
+                tools:ignore="LabelFor"/>
+
+        </LinearLayout>
+
+        <!-- Checkbox estilizado -->
         <CheckBox
             android:id="@+id/tvCicloActivo"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/ciclo_activo"
+            android:textColor="#212121"
+            android:textSize="14sp"
+            android:buttonTint="#6200EE"
             android:paddingTop="8dp"
+            android:paddingBottom="8dp"
             android:focusable="false"
-            android:clickable="false"
-            android:inputType="none"
-            android:paddingBottom="8dp" />
+            android:clickable="false"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>
