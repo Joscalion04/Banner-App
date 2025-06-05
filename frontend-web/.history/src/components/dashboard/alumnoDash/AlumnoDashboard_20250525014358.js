@@ -11,7 +11,6 @@ import {
     cargarMatriculas, 
     cargarCursosDisponibles 
 } from './alumnoApi';
-import { useWebSocket } from '../../useWebSocket';
 
 const AlumnoDashboard = ({ user , onLogout }) => {
     const [activeTab, setActiveTab] = useState('cursos');
@@ -65,22 +64,6 @@ const AlumnoDashboard = ({ user , onLogout }) => {
         
         loadData();
     }, [activeTab, user.cedula]);
-
-    useWebSocket(async (tipo, evento, id) => {
-        if (
-            tipo === 'grupo' &&
-            ['insertar', 'actualizar', 'eliminar'].includes(evento)
-        ) {
-            try {
-                const cursos = await cargarCursosDisponibles();
-                setCursosConDetalle(cursos);
-            } catch (err) {
-                console.error('Error al recargar cursos por WebSocket:', err);
-                setError(err.message);
-            }
-        }
-    });
-
 
     return (
         <div className={styles.dashboardLayout}>

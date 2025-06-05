@@ -16,12 +16,12 @@
         android:title="Cursos" />
 
     <item
-        android:id="@+id/oferta"
-        android:title="Oferta Académica" />
-
-    <item
         android:id="@+id/profesores"
         android:title="Profesores" />
+
+    <item
+        android:id="@+id/oferta"
+        android:title="Oferta Académica" />
 
     <item
         android:id="@+id/alumnos"
@@ -38,10 +38,6 @@
     <item
         android:id="@+id/historial"
         android:title="Historial" />
-
-    <item
-        android:id="@+id/seguridad"
-        android:title="Seguridad" />
 
     <item
         android:id="@+id/nav_logout"

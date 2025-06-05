@@ -56,7 +56,10 @@ object HistorialRepository {
                             numeroCiclo = ciclo.numero,
                             anioCiclo = ciclo.anio,
                             nombreCurso = curso.nombre,
-                            numeroGrupo = grupo.numeroGrupo
+                            numeroGrupo = grupo.numeroGrupo,
+                            matricula.grupoId,
+                            matricula.cedulaAlumno,
+                            matricula.nota
                         )
                     } catch (e: Exception) {
                         println("Error procesando matrícula ${matricula.matriculaId}: ${e.message}")

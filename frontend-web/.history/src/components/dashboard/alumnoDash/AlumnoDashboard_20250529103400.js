@@ -23,6 +23,17 @@ const AlumnoDashboard = ({ user , onLogout }) => {
     const [selectedGrupoId, setSelectedGrupoId] = useState(null);
     const navigate = useNavigate();
 
+    // WebSocket for cursos disponibles updates
+    useWebSocket((tipo, evento, id) => {
+        if (
+            activeTab === 'matricula' &&
+            tipo === 'curso' &&
+            (evento === 'insertar' || evento === 'actualizar' || evento === 'eliminar')
+        ) {
+            cargarCursosDisponibles().then(setCursosConDetalle);
+        }
+    });
+
     // Cargar datos del alumno
     useEffect(() => {
         const loadProfile = async () => {
@@ -65,22 +76,6 @@ const AlumnoDashboard = ({ user , onLogout }) => {
         
         loadData();
     }, [activeTab, user.cedula]);
-
-    useWebSocket(async (tipo, evento, id) => {
-        if (
-            tipo === 'grupo' &&
-            ['insertar', 'actualizar', 'eliminar'].includes(evento)
-        ) {
-            try {
-                const cursos = await cargarCursosDisponibles();
-                setCursosConDetalle(cursos);
-            } catch (err) {
-                console.error('Error al recargar cursos por WebSocket:', err);
-                setError(err.message);
-            }
-        }
-    });
-
 
     return (
         <div className={styles.dashboardLayout}>

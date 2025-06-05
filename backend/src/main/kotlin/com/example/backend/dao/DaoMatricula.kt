@@ -146,7 +146,7 @@ class DaoMatricula : Dao(), I_DaoMatricula {
                 )
             }
         } catch (e: SQLException) {
-            throw GlobalException("Error al consultar historial académico: ${e.message}")
+            throw GlobalException(e.message.toString())
         } finally {
             try {
                 rs?.close()
@@ -160,7 +160,7 @@ class DaoMatricula : Dao(), I_DaoMatricula {
         if (coleccion.isNotEmpty()) {
             return coleccion
         } else {
-            throw NoDataException("No se encontraron registros académicos para el alumno")
+            return emptyList<Matricula>()
         }
     }
 }

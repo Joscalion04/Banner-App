@@ -41,11 +41,11 @@ class MenuActivity : AppCompatActivity() {
         val todosLosItems = listOf(
             R.id.cursos, R.id.carreras, R.id.profesores, R.id.alumnos,
             R.id.ciclos, R.id.oferta, R.id.matricula, R.id.notas,
-            R.id.historial, R.id.seguridad
+            R.id.historial
         )
 
         val itemsVisibles = mapOf(
-            "ADMINISTRADOR" to todosLosItems - R.id.notas,
+            "ADMINISTRADOR" to todosLosItems - R.id.notas - R.id.historial - R.id.matricula,
             "MATRICULADOR" to listOf(R.id.alumnos),
             "PROFESOR" to listOf(R.id.notas),
             "ALUMNO" to listOf(R.id.historial)

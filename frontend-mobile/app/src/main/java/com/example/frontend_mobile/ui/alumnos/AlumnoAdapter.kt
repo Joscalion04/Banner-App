@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.model.Alumno
+import com.example.frontend_mobile.data.model.HistorialItem
 import com.example.frontend_mobile.data.repository.AlumnoRepository
 import com.example.frontend_mobile.databinding.ItemAlumnoCardBinding
 import kotlinx.coroutines.Dispatchers

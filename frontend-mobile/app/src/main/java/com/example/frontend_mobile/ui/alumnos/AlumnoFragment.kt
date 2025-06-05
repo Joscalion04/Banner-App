@@ -17,28 +17,42 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.data.model.Alumno
+import com.example.frontend_mobile.data.model.Grupo
+import com.example.frontend_mobile.data.model.HistorialItem
+import com.example.frontend_mobile.data.model.MatriculaRequest
 import com.example.frontend_mobile.data.repository.AlumnoRepository
+import com.example.frontend_mobile.data.repository.CicloRepository
+import com.example.frontend_mobile.data.repository.GrupoRepository
 import com.example.frontend_mobile.data.repository.HistorialRepository
+import com.example.frontend_mobile.data.repository.MatriculaRepository
+import com.example.frontend_mobile.data.repository.MatriculaRepository.MatriculaException
 import com.example.frontend_mobile.databinding.DialogAlumnoBinding
 import com.example.frontend_mobile.databinding.DialogHistorialBinding
+import com.example.frontend_mobile.databinding.DialogMatriculaBinding
 import com.example.frontend_mobile.databinding.FragmentAlumnosBinding
+import com.example.frontend_mobile.ui.grupos.GrupoDialogFragment
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
-class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener {
+class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
+    MatriculaAdapter.OnMatriculaClickListener,
+    GrupoDialogFragment.OnGrupoSelectedListener {
 
     private lateinit var binding: FragmentAlumnosBinding
     private val alumnoRepository = AlumnoRepository
     private lateinit var adapter: AlumnoAdapter
+    private lateinit var matriculaAdapter: MatriculaAdapter
+    private lateinit var matriculaBinding: DialogMatriculaBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentAlumnosBinding.inflate(inflater, container, false)
+        matriculaBinding = DialogMatriculaBinding.inflate(inflater, container, false)
         return binding.root
     }
 
@@ -49,6 +63,8 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener {
         adapter = AlumnoAdapter(mutableListOf(), this, alumnoRepository)
         binding.recyclerViewAlumnos.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewAlumnos.adapter = adapter
+
+        matriculaAdapter = MatriculaAdapter(mutableListOf(), this, MatriculaRepository)
 
         cargarAlumnos()
 
@@ -124,6 +140,54 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener {
             }
         })
         touchHelper.attachToRecyclerView(binding.recyclerViewAlumnos)
+
+        val matriculaTouchHelper = ItemTouchHelper(object : ItemTouchHelper.SimpleCallback(
+            0,
+            ItemTouchHelper.LEFT or ItemTouchHelper.RIGHT
+        ) {
+            override fun onMove(
+                recyclerView: RecyclerView,
+                viewHolder: RecyclerView.ViewHolder,
+                target: RecyclerView.ViewHolder
+            ): Boolean = false
+
+            @RequiresApi(Build.VERSION_CODES.O)
+            override fun onSwiped(viewHolder: RecyclerView.ViewHolder, direction: Int) {
+                val pos = viewHolder.adapterPosition
+
+                when (direction) {
+                    ItemTouchHelper.LEFT -> {
+                        AlertDialog.Builder(requireContext())
+                            .setTitle("Eliminar matricula")
+                            .setMessage("¿Eliminar?")
+                            .setPositiveButton("Sí") { _, _ ->
+                                lifecycleScope.launch {
+                                    val exito = matriculaAdapter.eliminarMatricula(pos)
+                                    if (exito) {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Matricula eliminada",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                    } else {
+                                        Toast.makeText(
+                                            requireContext(),
+                                            "Error al eliminar la matricula",
+                                            Toast.LENGTH_SHORT
+                                        ).show()
+                                        adapter.notifyItemChanged(pos) // para "revertir" swipe visualmente
+                                    }
+                                }
+                            }
+                            .setNegativeButton("No") { _, _ ->
+                                adapter.notifyItemChanged(pos)
+                            }
+                            .show()
+                    }
+                }
+            }
+        })
+        matriculaTouchHelper.attachToRecyclerView(matriculaBinding.recyclerViewMatricula)
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -181,22 +245,72 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener {
         }
     }
 
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onMatricularClick(alumno: Alumno) {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Matricular Alumno")
-            .setMessage("¿Desea matricular a ${alumno.nombre}?")
-            .setPositiveButton("Sí") { _, _ ->
-                Toast.makeText(requireContext(), "${alumno.nombre} matriculado", Toast.LENGTH_SHORT).show()
-                // Aquí podrías lanzar un nuevo diálogo con más opciones o lógica
-            }
-            .setNegativeButton("Cancelar", null)
-            .show()
+        mostrarDialogMatricula(alumno)
     }
 
 
     @RequiresApi(Build.VERSION_CODES.O)
     override fun onConsultarHistorialClick(alumno: Alumno) {
         mostrarDialogHistorial(alumno)
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun mostrarDialogMatricula(alumno: Alumno) {
+        val dialogBinding = DialogMatriculaBinding.inflate(layoutInflater)
+
+        dialogBinding.recyclerViewMatricula.layoutManager = LinearLayoutManager(requireContext())
+        dialogBinding.recyclerViewMatricula.adapter = matriculaAdapter
+
+        // Actualizar el título con el nombre del alumno
+        dialogBinding.tvTituloMatricula.text = "Matriculas de ${alumno.nombre}"
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Matrículas")
+            .setView(dialogBinding.root)
+            .setPositiveButton("Cerrar", null)
+            .create()
+
+
+        dialogBinding.fabMatricular.setOnClickListener {
+            val grupoDialog  = GrupoDialogFragment.newInstance(alumno)
+            grupoDialog .show(childFragmentManager, "GrupoDialogFragment")
+        }
+
+        // Cargar el historial del alumno
+        lifecycleScope.launch {
+            try {
+                val historial = HistorialRepository.obtenerHistorialAlumno(alumno.cedula).filter { historialItem ->
+                    val grupo = GrupoRepository.listarGrupos().find { it.grupoId == historialItem.grupoId }
+                    val ciclo = CicloRepository.listarCiclos().find { it.cicloId == grupo?.cicloId }
+                    ciclo?.activo == true
+                }
+                withContext(Dispatchers.Main) {
+                    if (historial.isNotEmpty()) {
+                        matriculaAdapter.actualizarLista(historial)
+                    } else {
+                        matriculaAdapter.actualizarLista(emptyList())
+                        // Mostrar mensaje cuando no hay historial
+                        Toast.makeText(
+                            requireContext(),
+                            "No se encontró historial para ${alumno.nombre}",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error al cargar el historial: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        dialog.show()
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -317,5 +431,83 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener {
             }
             .setNegativeButton("Cancelar", null)
             .show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onMatriculaLongClick(item: HistorialItem): Boolean {
+        AlertDialog.Builder(requireContext())
+            .setTitle("Eliminar matricula")
+            .setMessage("¿Estás seguro de eliminar la matricula?")
+            .setPositiveButton("Eliminar") { _, _ ->
+                eliminarMatricula(item)
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+        return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun eliminarMatricula(matricula: HistorialItem) {
+        lifecycleScope.launch {
+            val request = MatriculaRequest(matricula.grupoId, matricula.cedulaAlumno)
+            val exito = MatriculaRepository.eliminarMatricula(request)
+
+            withContext(Dispatchers.Main) {
+                if (exito) {
+                    Toast.makeText(requireContext(), "Matrícula eliminada", Toast.LENGTH_SHORT).show()
+                    val historial = HistorialRepository.obtenerHistorialAlumno(matricula.cedulaAlumno).filter { historialItem ->
+                        val grupo = GrupoRepository.listarGrupos().find { it.grupoId == historialItem.grupoId }
+                        val ciclo = CicloRepository.listarCiclos().find { it.cicloId == grupo?.cicloId }
+                        ciclo?.activo == true
+                    }
+                    matriculaAdapter.actualizarLista(historial)
+                } else {
+                    Toast.makeText(requireContext(), "Error al eliminar", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onGrupoSelected(grupo: Grupo, alumno: Alumno) {
+        lifecycleScope.launch {
+            try {
+                val request = MatriculaRequest(grupo.grupoId, alumno.cedula)
+                val exito = MatriculaRepository.agregarMatricula(request)
+
+                withContext(Dispatchers.Main) {
+                    if (exito) {
+                        val historial = HistorialRepository.obtenerHistorialAlumno(alumno.cedula)
+                            .filter { historialItem ->
+                                val grupo = GrupoRepository.listarGrupos()
+                                    .find { it.grupoId == historialItem.grupoId }
+                                val ciclo = CicloRepository.listarCiclos()
+                                    .find { it.cicloId == grupo?.cicloId }
+                                ciclo?.activo == true
+                            }
+                        matriculaAdapter.actualizarLista(historial)
+                    } else {
+                        Toast.makeText(requireContext(), "Error al matricular", Toast.LENGTH_SHORT)
+                            .show()
+                    }
+                }
+            } catch (e: MatriculaException) {
+                // Mostrar el mensaje que llegó dentro de la excepción
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(),
+                        e.message ?: "Error desconocido",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            } catch (e: Exception) {
+                // En caso de otra excepción inesperada
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(requireContext(),
+                        "Error inesperado: ${e.message}",
+                        Toast.LENGTH_LONG
+                    ).show()
+                }
+            }
+        }
     }
 }

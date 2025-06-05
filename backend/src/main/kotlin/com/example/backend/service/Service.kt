@@ -446,6 +446,10 @@ class Service(
 
     override fun registrarMatricula(grupoId: Int, cedulaAlumno: String) {
         try {
+            val historial = daoMatricula.consultarHistorialAcademico(cedulaAlumno)
+            if (historial.any { it.grupoId == grupoId }) {
+                throw IllegalArgumentException("El alumno ya está matriculado en este grupo")
+            }
             daoMatricula.registrarMatricula(grupoId, cedulaAlumno)
             socketHandler.notificarCambio("matricula", "insertar", "$grupoId-$cedulaAlumno")
         } catch (e: Exception) {

@@ -19,6 +19,7 @@ class GrupoAdapter(
     interface OnGrupoClickListener {
         fun onGrupoClick(grupo: Grupo)
         fun onGrupoLongClick(grupo: Grupo): Boolean
+        fun isDialogMode(): Boolean
     }
 
     inner class GrupoViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
@@ -32,7 +33,13 @@ class GrupoAdapter(
             tvProfesor.text = "Prof: ${grupo.cedulaProfesor}"
 
             itemView.setOnClickListener { listener.onGrupoClick(grupo) }
-            itemView.setOnLongClickListener { listener.onGrupoLongClick(grupo) }
+            itemView.setOnLongClickListener {
+                if (listener.isDialogMode()) {
+                    false // No permitir en modo diálogo
+                } else {
+                    listener.onGrupoLongClick(grupo)
+                }
+            }
         }
     }
 

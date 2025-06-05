@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frontend_mobile.R
 import com.example.frontend_mobile.data.model.Carrera
 import com.example.frontend_mobile.data.model.Ciclo
 import com.example.frontend_mobile.data.model.Curso
@@ -33,6 +34,7 @@ import kotlinx.coroutines.withContext
 
 class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
 
+    var listener: GrupoAdapter.OnGrupoClickListener = this
     private lateinit var binding: FragmentGruposBinding
     private val carreraRepository = CarreraRepository
     private val cicloRepository = CicloRepository
@@ -59,7 +61,11 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = GrupoAdapter(mutableListOf(), this)
+        // Ocultar botón de cerrar en modo fragmento normal
+        binding.root.findViewById<View>(R.id.btnClose)?.visibility = View.GONE
+
+        // Resto de la configuración original...
+        adapter = GrupoAdapter(mutableListOf(), listener)
         binding.recyclerViewGrupos.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewGrupos.adapter = adapter
 
@@ -67,6 +73,11 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
         configurarSpinners()
         configurarFab()
         configurarSwipeGestures()
+    }
+
+    override fun isDialogMode(): Boolean {
+        // En el fragmento original, nunca estamos en modo diálogo
+        return false
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -171,7 +182,7 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
 
         if (cicloSeleccionado != null && cursoSeleccionado != null) {
             val gruposFiltrados = todosLosGrupos.filter { grupo ->
-                grupo.cicloId == cicloSeleccionado.numero &&
+                grupo.cicloId == cicloSeleccionado.cicloId &&
                 grupo.codigoCurso == cursoSeleccionado.codigoCurso
             }
             adapter.actualizarLista(gruposFiltrados)

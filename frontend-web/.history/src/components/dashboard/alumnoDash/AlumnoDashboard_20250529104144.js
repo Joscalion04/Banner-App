@@ -68,7 +68,7 @@ const AlumnoDashboard = ({ user , onLogout }) => {
 
     useWebSocket(async (tipo, evento, id) => {
         if (
-            tipo === 'grupo' &&
+            tipo === 'curso' &&
             ['insertar', 'actualizar', 'eliminar'].includes(evento)
         ) {
             try {
