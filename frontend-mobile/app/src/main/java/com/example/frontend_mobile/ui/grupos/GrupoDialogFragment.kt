@@ -35,25 +35,17 @@ class GrupoDialogFragment(private val alumno: Alumno) : DialogFragment() {
         }
 
         if (childFragmentManager.findFragmentById(R.id.containerGrupo) == null) {
-            // Creamos la instancia de GrupoFragment
             grupoFragment = GrupoFragment()
 
-            // Transferir argumentos si los hubiera
             arguments?.let { grupoFragment.arguments = it }
 
-            // **Importante**: antes de hacer el commit, asignamos su listener
-            // para que, cuando el usuario haga clic en un grupo, el callback
-            // llame a `parentFragment as OnGrupoSelectedListener`.
             grupoFragment.listener = object : GrupoAdapter.OnGrupoClickListener {
                 override fun onGrupoClick(grupo: Grupo) {
-                    // 1) Cerramos este diálogo
                     dismiss()
-                    // 2) Notificamos al fragmento padre (AlumnoFragment) que implementa OnGrupoSelectedListener
                     (parentFragment as? OnGrupoSelectedListener)?.onGrupoSelected(grupo, alumno)
                 }
 
                 override fun onGrupoLongClick(grupo: Grupo): Boolean {
-                    // Si estamos en modo diálogo, no queremos el long click
                     return true
                 }
 
@@ -62,17 +54,15 @@ class GrupoDialogFragment(private val alumno: Alumno) : DialogFragment() {
                 }
             }
 
-            // Reemplazamos el FrameLayout @id/containerGrupo con nuestro GrupoFragment
             childFragmentManager
                 .beginTransaction()
                 .replace(R.id.containerGrupo, grupoFragment)
-                .commitNow() // commitNow() para que el fragmento quede inmediatamente en estado “attached”
+                .commitNow()
         }
     }
 
     override fun onResume() {
         super.onResume()
-        // Ajustar tamaño del diálogo
         dialog?.window?.setLayout(
             ViewGroup.LayoutParams.MATCH_PARENT,
             ViewGroup.LayoutParams.MATCH_PARENT
@@ -83,7 +73,6 @@ class GrupoDialogFragment(private val alumno: Alumno) : DialogFragment() {
         fun newInstance(alumno: Alumno) = GrupoDialogFragment(alumno)
     }
 
-    // Interfaz para comunicar la selección de grupo
     interface OnGrupoSelectedListener {
         fun onGrupoSelected(grupo: Grupo, alumno: Alumno)
     }

@@ -18,64 +18,42 @@
 
         <!-- Career -->
         <TextView
-            android:id="@+id/tvCarreraHistorial"
+            android:id="@+id/tvNombreAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nombre:"
+            android:textSize="15sp"
+            android:textColor="#212121"
+            android:textStyle="bold"
+            android:layout_marginBottom="6dp"
+            android:drawableStart="@android:drawable/ic_menu_my_calendar"
+            android:drawablePadding="8dp"
+            android:drawableTint="#6200EE"
+            android:focusable="false"
+            android:clickable="false" />
+
+        <TextView
+            android:id="@+id/tvCedulaAlumno"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Cédula:"
+            android:textSize="15sp"
+            android:textColor="#212121"
+            android:layout_marginBottom="6dp"
+            android:drawableStart="@android:drawable/ic_menu_edit"
+            android:drawablePadding="8dp"
+            android:drawableTint="#6200EE"
+            android:focusable="false"
+            android:clickable="false" />
+
+        <TextView
+            android:id="@+id/tvNotaAlumno"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Carrera: "
             android:textSize="15sp"
             android:textColor="#212121"
-            android:textStyle="bold"
             android:layout_marginBottom="6dp"
-            android:drawableStart="@android:drawable/ic_menu_agenda"
-            android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
-
-        <!-- Cycle -->
-        <TextView
-            android:id="@+id/tvCicloHistorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Ciclo: "
-            android:textSize="15sp"
-            android:textColor="#424242"
-            android:layout_marginBottom="6dp"
-            android:drawableStart="@android:drawable/ic_menu_month"
-            android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
-
-        <!-- Course -->
-        <TextView
-            android:id="@+id/tvCursoHistorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Curso: "
-            android:textSize="15sp"
-            android:textColor="#424242"
-            android:layout_marginBottom="6dp"
-            android:drawableStart="@android:drawable/ic_menu_edit"
-            android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
-
-        <!-- Group -->
-        <TextView
-            android:id="@+id/tvGrupoHistorial"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Grupo: "
-            android:textSize="15sp"
-            android:textColor="#424242"
-            android:drawableStart="@android:drawable/ic_menu_my_calendar"
-            android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
-
-        <!-- Group -->
-        <TextView
-            android:id="@+id/tvNotaMatricula"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Nota: "
-            android:textSize="15sp"
-            android:textColor="#424242"
             android:drawableStart="@android:drawable/ic_dialog_info"
             android:drawablePadding="8dp"
             android:drawableTint="#6200EE"/>

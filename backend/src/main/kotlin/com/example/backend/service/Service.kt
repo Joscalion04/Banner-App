@@ -486,4 +486,12 @@ class Service(
             throw e
         }
     }
+
+    override fun obtenerMatriculasPorGrupo(grupoId: Int): Collection<Matricula> {
+        try {
+            return daoMatricula.obtenerMatriculasPorGrupo(grupoId)
+        } catch (e: Exception) {
+            throw e
+        }
+    }
 }

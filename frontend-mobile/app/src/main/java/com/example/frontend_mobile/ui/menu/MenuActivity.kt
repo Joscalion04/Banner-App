@@ -3,6 +3,7 @@ package com.example.frontend_mobile.ui.menu
 import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
+import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -40,20 +41,22 @@ class MenuActivity : AppCompatActivity() {
 
         val todosLosItems = listOf(
             R.id.cursos, R.id.carreras, R.id.profesores, R.id.alumnos,
-            R.id.ciclos, R.id.oferta, R.id.matricula, R.id.notas,
-            R.id.historial
+            R.id.ciclos, R.id.oferta, R.id.matricula
         )
 
         val itemsVisibles = mapOf(
-            "ADMINISTRADOR" to todosLosItems - R.id.notas - R.id.historial - R.id.matricula,
+            "ADMINISTRADOR" to todosLosItems - R.id.matricula,
             "MATRICULADOR" to listOf(R.id.alumnos),
-            "PROFESOR" to listOf(R.id.notas),
-            "ALUMNO" to listOf(R.id.historial)
+            "PROFESOR" to listOf(R.id.oferta),
+            "ALUMNO" to listOf(R.id.alumnos)
         )[tipoUsuario] ?: emptyList()
 
         todosLosItems.forEach { id ->
             menu.findItem(id)?.isVisible = id in itemsVisibles
         }
+
+        menu.findItem(R.id.alumnos).title = if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") "Alumnos" else "Perfil"
+        menu.findItem(R.id.oferta).title = if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") "Oferta Académica" else "Notas"
 
         navigationView.setNavigationItemSelectedListener { menuItem ->
             when (menuItem.itemId) {

@@ -24,4 +24,6 @@ interface I_DaoMatricula {
     // ----------------- Historial Académico -----------------
 
     fun consultarHistorialAcademico(cedulaAlumno: String): Collection<Matricula>
+
+    fun obtenerMatriculasPorGrupo(grupoId: Int): Collection<Matricula>
 }

@@ -163,4 +163,49 @@ class DaoMatricula : Dao(), I_DaoMatricula {
             return emptyList<Matricula>()
         }
     }
+
+    @Throws(GlobalException::class, NoDataException::class)
+    override fun obtenerMatriculasPorGrupo(grupoId: Int): Collection<Matricula> {
+        tryConnection()
+
+        var rs: ResultSet? = null
+        val coleccion = mutableListOf<Matricula>()
+        var pstmt: CallableStatement? = null
+
+        try {
+            pstmt = conexion?.prepareCall("{? = call MOVILES.OBTENER_MATRICULAS_POR_GRUPO(?)}")
+            pstmt?.registerOutParameter(1, OracleTypes.CURSOR)
+            pstmt?.setInt(2, grupoId)
+            pstmt?.execute()
+
+            rs = pstmt?.getObject(1) as ResultSet?
+
+            while (rs?.next() == true) {
+                coleccion.add(
+                    Matricula(
+                        matriculaId = rs.getInt("MATRICULA_ID"),
+                        grupoId = rs.getInt("GRUPO_ID"),
+                        cedulaAlumno = rs.getString("CEDULA_ALUMNO"),
+                        nota = rs.getBigDecimal("NOTA")
+                    )
+                )
+            }
+        } catch (e: SQLException) {
+            throw GlobalException(e.message.toString())
+        } finally {
+            try {
+                rs?.close()
+                pstmt?.close()
+                desconectar()
+            } catch (e: SQLException) {
+                throw GlobalException("Error al cerrar recursos")
+            }
+        }
+
+        if (coleccion.isNotEmpty()) {
+            return coleccion
+        } else {
+            return emptyList<Matricula>()
+        }
+    }
 }

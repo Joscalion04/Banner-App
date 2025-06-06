@@ -6,6 +6,7 @@ import android.view.ViewGroup
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.R
+import com.example.frontend_mobile.data.SessionManager
 import com.example.frontend_mobile.data.model.Grupo
 
 class GrupoAdapter(
@@ -31,6 +32,12 @@ class GrupoAdapter(
             tvNumeroGrupo.text = "Grupo ${grupo.numeroGrupo}"
             tvHorario.text = grupo.horario
             tvProfesor.text = "Prof: ${grupo.cedulaProfesor}"
+
+            if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") {
+                tvProfesor.visibility = View.VISIBLE
+            } else {
+                tvProfesor.visibility = View.GONE
+            }
 
             itemView.setOnClickListener { listener.onGrupoClick(grupo) }
             itemView.setOnLongClickListener {

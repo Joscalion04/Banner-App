@@ -17,6 +17,7 @@ class HistorialAdapter(
             binding.tvCicloHistorial.text = "Ciclo: ${historialItem.numeroCiclo} - ${historialItem.anioCiclo}"
             binding.tvCursoHistorial.text = "Curso: ${historialItem.nombreCurso}"
             binding.tvGrupoHistorial.text = "Grupo: ${historialItem.numeroGrupo}"
+            binding.tvNotaMatricula.text = "Nota: ${historialItem.nota}"
         }
     }
 

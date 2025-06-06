@@ -32,14 +32,6 @@
         android:title="Matricula" />
 
     <item
-        android:id="@+id/notas"
-        android:title="Notas" />
-
-    <item
-        android:id="@+id/historial"
-        android:title="Historial" />
-
-    <item
         android:id="@+id/nav_logout"
         android:title="Logout" />
 

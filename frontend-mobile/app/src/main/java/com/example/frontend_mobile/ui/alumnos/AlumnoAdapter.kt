@@ -3,9 +3,11 @@ package com.example.frontend_mobile.ui.alumnos
 import android.os.Build
 import android.text.Editable
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frontend_mobile.data.SessionManager
 import com.example.frontend_mobile.data.model.Alumno
 import com.example.frontend_mobile.data.model.HistorialItem
 import com.example.frontend_mobile.data.repository.AlumnoRepository
@@ -30,6 +32,9 @@ class AlumnoAdapter(
             binding.tvFechaNacimientoAlumno.text =
                 Editable.Factory.getInstance().newEditable("Fecha de nacimiento: " + alumno.fechaNacimiento)
             binding.tvCodigoCarreraAlumno.text = "Carrera: " + alumno.codigoCarrera
+
+            binding.btnMatricular.visibility = if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") View.GONE else View.VISIBLE
+            binding.btnConsultarHistorial.visibility = if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") View.GONE else View.VISIBLE
 
             binding.root.setOnClickListener { listener.onAlumnoClick(alumno) }
             binding.root.setOnLongClickListener { listener.onAlumnoLongClick(alumno) }

@@ -110,13 +110,13 @@ private lateinit var binding: ActivityLoginBinding
             }
         }
 
-        val registerButton: Button = findViewById(R.id.register)
+//        val registerButton: Button = findViewById(R.id.register)
 
-        registerButton.setOnClickListener {
-            val intent = Intent(this, RegisterActivity::class.java)
-            startActivity(intent)
-            finish()
-        }
+//        registerButton.setOnClickListener {
+//            val intent = Intent(this, RegisterActivity::class.java)
+//            startActivity(intent)
+//            finish()
+//        }
     }
 
     private fun updateUiWithUser(model: LoggedInUserView) {

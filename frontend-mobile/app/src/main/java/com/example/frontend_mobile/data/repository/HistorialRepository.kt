@@ -20,6 +20,7 @@ object HistorialRepository {
     private val cicloRepository = CicloRepository
     private val carreraRepository = CarreraRepository
     private val carreraCursoRepository = CarreraCursoRepository
+    private val alumnoRepository = AlumnoRepository
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun obtenerHistorialAlumno(cedulaAlumno: String): List<HistorialItem> = withContext(Dispatchers.IO) {
@@ -43,12 +44,14 @@ object HistorialRepository {
                         val ciclos = cicloRepository.listarCiclos()
                         val carreras = carreraRepository.listarCarreras()
                         val carreraCursos = carreraCursoRepository.listarCarrerasCursos()
+                        val alumnos = alumnoRepository.listarAlumnos()
 
                         val grupo = grupos.find { it.grupoId == matricula.grupoId } ?: return@mapNotNull null
                         val curso = cursos.find { it.codigoCurso == grupo.codigoCurso } ?: return@mapNotNull null
                         val ciclo = ciclos.find { it.cicloId == grupo.cicloId } ?: return@mapNotNull null
                         val carreraCurso = carreraCursos.find { it.codigoCurso == curso.codigoCurso } ?: return@mapNotNull null
                         val carrera = carreras.find { it.codigoCarrera == carreraCurso.codigoCarrera } ?: return@mapNotNull null
+                        val alumno = alumnos.find { it.cedula == matricula.cedulaAlumno } ?: return@mapNotNull null
 
 
                         HistorialItem(
@@ -59,7 +62,69 @@ object HistorialRepository {
                             numeroGrupo = grupo.numeroGrupo,
                             matricula.grupoId,
                             matricula.cedulaAlumno,
-                            matricula.nota
+                            matricula.nota,
+                            alumno.nombre
+                        )
+                    } catch (e: Exception) {
+                        println("Error procesando matrícula ${matricula.matriculaId}: ${e.message}")
+                        null
+                    }
+                }
+            } else {
+                val error = conn.errorStream?.bufferedReader()?.use { it.readText() } ?: "Error desconocido"
+                println("Error al obtener historial ($responseCode): $error")
+                emptyList()
+            }
+        } catch (e: Exception) {
+            println("Error en la conexión al obtener historial: ${e.message}")
+            emptyList()
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    suspend fun obtenerMatriculasPorGrupo(grupoId: Int): List<HistorialItem> = withContext(Dispatchers.IO) {
+        val url = URL("$BASE_URL/obtenerMatriculasPorGrupo/$grupoId")
+        val conn = url.openConnection() as HttpURLConnection
+        conn.requestMethod = "GET"
+        conn.setRequestProperty("Accept", "application/json")
+
+        try {
+            val responseCode = conn.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                val response = conn.inputStream.bufferedReader().use { it.readText() }
+
+                val tipoLista = object : TypeToken<List<Matricula>>() {}.type
+                val matriculas: List<Matricula> = gson.fromJson(response, tipoLista) ?: emptyList()
+
+                matriculas.mapNotNull { matricula ->
+                    try {
+                        val grupos = grupoRepository.listarGrupos()
+                        val cursos = cursoRepository.listarCursos()
+                        val ciclos = cicloRepository.listarCiclos()
+                        val carreras = carreraRepository.listarCarreras()
+                        val carreraCursos = carreraCursoRepository.listarCarrerasCursos()
+                        val alumnos = alumnoRepository.listarAlumnos()
+
+                        val grupo = grupos.find { it.grupoId == matricula.grupoId } ?: return@mapNotNull null
+                        val curso = cursos.find { it.codigoCurso == grupo.codigoCurso } ?: return@mapNotNull null
+                        val ciclo = ciclos.find { it.cicloId == grupo.cicloId } ?: return@mapNotNull null
+                        val carreraCurso = carreraCursos.find { it.codigoCurso == curso.codigoCurso } ?: return@mapNotNull null
+                        val carrera = carreras.find { it.codigoCarrera == carreraCurso.codigoCarrera } ?: return@mapNotNull null
+                        val alumno = alumnos.find { it.cedula == matricula.cedulaAlumno } ?: return@mapNotNull null
+
+
+                        HistorialItem(
+                            nombreCarrera = carrera.nombre,
+                            numeroCiclo = ciclo.numero,
+                            anioCiclo = ciclo.anio,
+                            nombreCurso = curso.nombre,
+                            numeroGrupo = grupo.numeroGrupo,
+                            matricula.grupoId,
+                            matricula.cedulaAlumno,
+                            matricula.nota,
+                            alumno.nombre
                         )
                     } catch (e: Exception) {
                         println("Error procesando matrícula ${matricula.matriculaId}: ${e.message}")

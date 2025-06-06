@@ -15,6 +15,7 @@ import androidx.lifecycle.lifecycleScope
 import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
+import com.example.frontend_mobile.data.SessionManager
 import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.data.model.Alumno
 import com.example.frontend_mobile.data.model.Grupo
@@ -193,8 +194,12 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
     @RequiresApi(Build.VERSION_CODES.O)
     private fun cargarAlumnos() {
         lifecycleScope.launch {
-            val alumnosRemotos =
-                alumnoRepository.listarAlumnos() // suspende y espera la respuesta
+            val alumnosRemotos = if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") {
+                alumnoRepository.listarAlumnos()
+            } else {
+                alumnoRepository.listarAlumnos().filter { it.cedula == SessionManager.user?.cedula }
+            }
+
             adapter.actualizarLista(alumnosRemotos.toMutableList())
         }
     }

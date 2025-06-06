@@ -8,5 +8,6 @@ data class HistorialItem(
     val numeroGrupo: Int,
     val grupoId: Int,
     val cedulaAlumno: String,
-    val nota: Double
+    val nota: Double,
+    val nombreAlumno : String
 )

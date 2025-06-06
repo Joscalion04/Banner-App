@@ -626,4 +626,13 @@ class Controller(
         }
     }
 
+    @GetMapping("/obtenerMatriculasPorGrupo/{grupoId}")
+    fun obtenerMatriculasPorGrupo(@PathVariable grupoId: Int): ResponseEntity<Any> {
+        return try {
+            val matriculas = service.obtenerMatriculasPorGrupo(grupoId)
+            ResponseEntity.ok(matriculas)
+        } catch (e: Exception) {
+            ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error al obtener matrículas por grupo: ${e.message}")
+        }
+    }
 }

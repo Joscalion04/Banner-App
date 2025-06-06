@@ -16,23 +16,37 @@ import androidx.recyclerview.widget.ItemTouchHelper
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.R
+import com.example.frontend_mobile.data.SessionManager
+import com.example.frontend_mobile.data.WebSocketManager
+import com.example.frontend_mobile.data.model.Alumno
 import com.example.frontend_mobile.data.model.Carrera
 import com.example.frontend_mobile.data.model.Ciclo
 import com.example.frontend_mobile.data.model.Curso
 import com.example.frontend_mobile.data.model.Grupo
 import com.example.frontend_mobile.data.model.CarreraCurso
+import com.example.frontend_mobile.data.model.HistorialItem
+import com.example.frontend_mobile.data.model.NotaRequest
 import com.example.frontend_mobile.data.repository.CarreraRepository
 import com.example.frontend_mobile.data.repository.CicloRepository
 import com.example.frontend_mobile.data.repository.CursoRepository
 import com.example.frontend_mobile.data.repository.GrupoRepository
 import com.example.frontend_mobile.data.repository.CarreraCursoRepository
+import com.example.frontend_mobile.data.repository.HistorialRepository
+import com.example.frontend_mobile.data.repository.MatriculaRepository
 import com.example.frontend_mobile.databinding.DialogGrupoBinding
+import com.example.frontend_mobile.databinding.DialogHistorialBinding
+import com.example.frontend_mobile.databinding.DialogNotaBinding
+import com.example.frontend_mobile.databinding.DialogNotasBinding
 import com.example.frontend_mobile.databinding.FragmentGruposBinding
+import com.example.frontend_mobile.ui.alumnos.HistorialAdapter
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
-class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
+class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
+    NotasAdapter.OnNotaClickListener {
 
     var listener: GrupoAdapter.OnGrupoClickListener = this
     private lateinit var binding: FragmentGruposBinding
@@ -40,6 +54,7 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
     private val cicloRepository = CicloRepository
     private val cursoRepository = CursoRepository
     private val grupoRepository = GrupoRepository
+    private val matriculaRepository = MatriculaRepository
     private val carreraCursoRepository = CarreraCursoRepository
     private lateinit var adapter: GrupoAdapter
 
@@ -48,6 +63,8 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
     private var listaCursos: List<Curso> = emptyList()
     private var listaCarrerasCursos: List<CarreraCurso> = emptyList()
     private var todosLosGrupos: List<Grupo> = emptyList()
+    private lateinit var notasAdapter: NotasAdapter
+    private lateinit var dialogBindingNotas: DialogNotasBinding
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -69,10 +86,23 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
         binding.recyclerViewGrupos.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewGrupos.adapter = adapter
 
+        notasAdapter = NotasAdapter(mutableListOf(), this)
+
         cargarDatos()
         configurarSpinners()
         configurarFab()
         configurarSwipeGestures()
+
+        WebSocketManager.conectar { tipo, evento, id ->
+            if (tipo == "grupo" && (evento == "insertar" || evento == "actualizar" || evento == "eliminar")) {
+                lifecycleScope.launch(Dispatchers.Main) {
+                    cargarDatos()
+                    configurarSpinners()
+                    configurarFab()
+                    configurarSwipeGestures()
+                }
+            }
+        }
     }
 
     override fun isDialogMode(): Boolean {
@@ -87,7 +117,15 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
             listaCiclos = cicloRepository.listarCiclos()
             listaCursos = cursoRepository.listarCursos()
             listaCarrerasCursos = carreraCursoRepository.listarCarrerasCursos()
-            todosLosGrupos = grupoRepository.listarGrupos()
+//            todosLosGrupos = grupoRepository.listarGrupos()
+
+            if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR" || SessionManager.user?.tipoUsuario == "ALUMNO") {
+                todosLosGrupos = grupoRepository.listarGrupos()
+                binding.fabAgregarGrupo.visibility = View.VISIBLE
+            } else {
+                todosLosGrupos = grupoRepository.listarGrupos().filter { it.cedulaProfesor == SessionManager.user?.cedula }
+                binding.fabAgregarGrupo.visibility = View.GONE
+            }
 
             withContext(Dispatchers.Main) {
                 configurarAdaptersSpinners()
@@ -320,8 +358,56 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
+    private fun mostrarDialogNotas(grupo: Grupo) {
+
+        dialogBindingNotas = DialogNotasBinding.inflate(layoutInflater)
+        dialogBindingNotas.recyclerViewNotas.layoutManager = LinearLayoutManager(requireContext())
+        dialogBindingNotas.recyclerViewNotas.adapter = notasAdapter
+
+        val dialog = AlertDialog.Builder(requireContext())
+            .setTitle("Historial Académico")
+            .setView(dialogBindingNotas.root)
+            .setPositiveButton("Cerrar", null)
+            .create()
+
+        // Cargar el historial del alumno
+        lifecycleScope.launch {
+            try {
+                val historial = HistorialRepository.obtenerMatriculasPorGrupo(grupo.grupoId)
+                withContext(Dispatchers.Main) {
+                    if (historial.isNotEmpty()) {
+                        notasAdapter.actualizarLista(historial)
+                    } else {
+                        notasAdapter.actualizarLista(emptyList())
+                        // Mostrar mensaje cuando no hay historial
+                        Toast.makeText(
+                            requireContext(),
+                            "No se encontraron registros para este grupo",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            } catch (e: Exception) {
+                withContext(Dispatchers.Main) {
+                    Toast.makeText(
+                        requireContext(),
+                        "Error al cargar el historial: ${e.message}",
+                        Toast.LENGTH_SHORT
+                    ).show()
+                }
+            }
+        }
+
+        dialog.show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
     override fun onGrupoClick(grupo: Grupo) {
-        mostrarDialogGrupo(grupo)
+        if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR") {
+            mostrarDialogGrupo(grupo)
+        } else {
+            mostrarDialogNotas(grupo)
+        }
     }
 
     @RequiresApi(Build.VERSION_CODES.O)
@@ -331,5 +417,48 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener {
             mostrarDialogEliminar(grupo, position)
         }
         return true
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    private fun mostrarDialogNota(historialItem: HistorialItem) {
+        val dialogBinding = DialogNotaBinding.inflate(layoutInflater)
+
+        // Prellenar campos si es edición
+        historialItem.let {
+            dialogBinding.tvNombreAlumno.text = it.nombreAlumno
+            dialogBinding.tvCedulaAlumno.text = it.cedulaAlumno
+            dialogBinding.etNotaAlumno.setText(it.nota.toString())
+        }
+
+        AlertDialog.Builder(requireContext())
+            .setTitle("Editar Nota")
+            .setView(dialogBinding.root)
+            .setPositiveButton("Guardar") { _, _ ->
+                val cedula = dialogBinding.tvCedulaAlumno.text.toString().trim()
+                val nota = dialogBinding.etNotaAlumno.text.toString().toInt()
+
+                lifecycleScope.launch {
+                    matriculaRepository.registrarNota(NotaRequest(
+                        historialItem.grupoId,
+                        cedula,
+                        nota
+                    ))
+                    withContext(Dispatchers.Main) {
+                        notasAdapter.actualizarLista(HistorialRepository.obtenerMatriculasPorGrupo(historialItem.grupoId))
+                        Toast.makeText(
+                            requireContext(),
+                            "Nota actualizada",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }
+            }
+            .setNegativeButton("Cancelar", null)
+            .show()
+    }
+
+    @RequiresApi(Build.VERSION_CODES.O)
+    override fun onNotaClick(historialItem: HistorialItem) {
+        mostrarDialogNota(historialItem)
     }
 }

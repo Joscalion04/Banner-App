@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp"
+        android:gravity="center_horizontal">
+
+        <TextView
+            android:id="@+id/tvNombreAlumno"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:text="Nombre del Alumno"
+            android:textColor="#000000"
+            android:background="#EEEEEE"
+            android:textSize="16sp" />
+
+        <TextView
+            android:id="@+id/tvCedulaAlumno"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:gravity="center_vertical"
+            android:paddingStart="8dp"
+            android:text="Cédula"
+            android:textColor="#000000"
+            android:background="#EEEEEE"
+            android:textSize="16sp"
+            android:layout_marginTop="8dp" />
+
+        <EditText
+            android:id="@+id/etNotaAlumno"
+            android:layout_width="340dp"
+            android:layout_height="48dp"
+            android:hint="Nota"
+            android:inputType="number"
+            android:layout_marginTop="8dp"
+            android:paddingStart="12dp"
+            android:paddingEnd="12dp" />
+
+    </LinearLayout>
+</ScrollView>

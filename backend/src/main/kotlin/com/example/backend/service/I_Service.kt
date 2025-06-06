@@ -132,4 +132,6 @@ interface I_Service {
     // ----------------- Historial Académico -----------------
 
     fun consultarHistorialAcademico(cedulaAlumno: String): Collection<Matricula>
+
+    fun obtenerMatriculasPorGrupo(grupoId: Int): Collection<Matricula>
 }

@@ -1,6 +1,7 @@
 package com.example.frontend_mobile.data.repository
 
 import com.example.frontend_mobile.data.model.MatriculaRequest
+import com.example.frontend_mobile.data.model.NotaRequest
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import kotlinx.coroutines.Dispatchers
@@ -44,6 +45,40 @@ object MatriculaRepository {
             }
         } catch (e: Exception) {
             throw MatriculaException(e.message.toString())
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+    suspend fun registrarNota(notaRequest: NotaRequest): Boolean = withContext(Dispatchers.IO) {
+        val url = URL("$BASE_URL/registrarNota")
+        val conn = url.openConnection() as HttpURLConnection
+        conn.requestMethod = "POST"
+        conn.doOutput = true
+        conn.setRequestProperty("Content-Type", "application/json")
+        conn.setRequestProperty("Accept", "application/json")
+
+        try {
+            // Convertir el notaRequest a JSON (usamos Gson)
+            val jsonNota = gson.toJson(notaRequest)
+
+            // Enviar JSON
+            conn.outputStream.use { os ->
+                os.write(jsonNota.toByteArray(Charsets.UTF_8))
+            }
+
+            val responseCode = conn.responseCode
+            if (responseCode == HttpURLConnection.HTTP_OK) {
+                true
+            } else {
+                val error = conn.errorStream
+                    ?.bufferedReader()
+                    ?.use { it.readText() }
+                    ?: "Error desconocido"
+                throw MatriculaException("Error $responseCode: $error")
+            }
+        } catch (e: Exception) {
+            throw MatriculaException("Error de conexión: ${e.message}")
         } finally {
             conn.disconnect()
         }
