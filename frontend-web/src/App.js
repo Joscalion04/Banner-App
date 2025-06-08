@@ -54,7 +54,7 @@ function App() {
                 <Route 
                     path="/profesor" 
                     element={user && user.tipoUsuario === 'PROFESOR' ? (
-                        <ProfesorDashboard user={user} />
+                        <ProfesorDashboard  user={user} onLogout={() => setUser(null)} />
                     ) : (
                         <Navigate to="/login" replace />
                     )}
