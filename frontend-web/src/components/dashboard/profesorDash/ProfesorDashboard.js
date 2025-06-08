@@ -1,6 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styles from '../../styles/App.module.css';
+import {
+    obtenerProfesorPorCedula,
+    obtenerGruposProfesor,
+    obtenerAlumnosMatriculados,
+    registrarNotasAlumnos,
+    actualizarPerfilProfesor
+} from './profesorApi';
 
 const ProfesorDashboard = ({ user, onLogout }) => {
     const navigate = useNavigate();
@@ -8,7 +15,6 @@ const ProfesorDashboard = ({ user, onLogout }) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     
-    // Estado del profesor
     const [profesor, setProfesor] = useState({
         cedula: user.cedula,
         nombre: '',
@@ -16,15 +22,10 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         email: ''
     });
     
-    // Estado para los grupos
     const [grupos, setGrupos] = useState([]);
     const [selectedGrupoId, setSelectedGrupoId] = useState(null);
-    
-    // Estado para alumnos matriculados y notas
     const [alumnosMatriculados, setAlumnosMatriculados] = useState([]);
     const [notasTemporales, setNotasTemporales] = useState({});
-    
-    // Estado para edición de perfil
     const [editMode, setEditMode] = useState(false);
     const [editData, setEditData] = useState({
         nombre: '',
@@ -32,7 +33,6 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         email: ''
     });
 
-    // Función para manejar logout
     const handleLogout = () => {
         onLogout();
         navigate('/login');
@@ -44,11 +44,7 @@ const ProfesorDashboard = ({ user, onLogout }) => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch(`/api/obtenerProfesor/id/${user.cedula}`);
-                if (!response.ok) {
-                    throw new Error('Error al cargar perfil del profesor');
-                }
-                const data = await response.json();
+                const data = await obtenerProfesorPorCedula(user.cedula);
                 setProfesor({
                     cedula: data.cedula,
                     nombre: data.nombre,
@@ -76,12 +72,7 @@ const ProfesorDashboard = ({ user, onLogout }) => {
             setLoading(true);
             setError(null);
             try {
-                const response = await fetch('/api/obtenerGrupos');
-                if (!response.ok) {
-                    throw new Error('Error al cargar grupos');
-                }
-                const data = await response.json();
-                const gruposProfesor = data.filter(grupo => grupo.cedulaProfesor === user.cedula);
+                const gruposProfesor = await obtenerGruposProfesor(user.cedula);
                 setGrupos(gruposProfesor);
             } catch (err) {
                 setError(err.message);
@@ -100,31 +91,8 @@ const ProfesorDashboard = ({ user, onLogout }) => {
                 setLoading(true);
                 setError(null);
                 try {
-                    const response = await fetch(`/api/consultarHistorialAcademico?grupoId=${selectedGrupoId}`);
-                    if (!response.ok) {
-                        throw new Error('Error al cargar alumnos matriculados');
-                    }
-                    const data = await response.json();
-                    
-                    // Obtener información detallada de cada alumno
-                    const alumnosConInfo = await Promise.all(
-                        data.map(async matricula => {
-                            const alumnoResponse = await fetch(`/api/obtenerAlumno/cedula/${matricula.cedulaAlumno}`);
-                            if (!alumnoResponse.ok) {
-                                return {
-                                    ...matricula,
-                                    nombre: 'Nombre no disponible'
-                                };
-                            }
-                            const alumnoData = await alumnoResponse.json();
-                            return {
-                                ...matricula,
-                                nombre: alumnoData.nombre
-                            };
-                        })
-                    );
-                    
-                    setAlumnosMatriculados(alumnosConInfo);
+                    const alumnos = await obtenerAlumnosMatriculados(selectedGrupoId);
+                    setAlumnosMatriculados(alumnos);
                 } catch (err) {
                     setError(err.message);
                 } finally {
@@ -136,7 +104,6 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         }
     }, [selectedGrupoId]);
 
-    // Manejar cambio de notas temporales
     const handleNotaChange = (cedulaAlumno, nota) => {
         setNotasTemporales(prev => ({
             ...prev,
@@ -144,39 +111,42 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         }));
     };
 
-    // Registrar notas en el backend
     const registrarNotas = async () => {
         setLoading(true);
         setError(null);
+        
         try {
-            const notasParaRegistrar = Object.entries(notasTemporales)
-                .filter(([_, nota]) => nota !== undefined && nota !== '');
-            
-            for (const [cedulaAlumno, nota] of notasParaRegistrar) {
-                const response = await fetch('/api/registrarNota', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({
-                        grupoId: selectedGrupoId,
-                        cedulaAlumno: cedulaAlumno,
-                        nota: parseInt(nota)
-                    })
-                });
+            const { resultados, errores } = await registrarNotasAlumnos({
+                grupoId: selectedGrupoId,
+                notasTemporales
+            });
+
+            // Mostrar resultados
+            if (errores.length > 0) {
+                const mensajeError = errores.map(e => 
+                    `Alumno ${e.cedulaAlumno}: ${e.message}`
+                ).join('\n');
                 
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(errorData.message || 'Error al registrar nota');
-                }
+                setError(`Algunas notas no se registraron:\n${mensajeError}`);
+            } else {
+                // Mostrar mensaje de éxito
+                setError('Todas las notas se registraron correctamente');
+                setTimeout(() => setError(null), 3000);
             }
-            
+
             // Actualizar la lista de alumnos después de registrar las notas
-            const response = await fetch(`/api/consultarHistorialAcademico?grupoId=${selectedGrupoId}`);
-            const data = await response.json();
-            setAlumnosMatriculados(data);
-            setNotasTemporales({});
+            const alumnos = await obtenerAlumnosMatriculados(selectedGrupoId);
+            setAlumnosMatriculados(alumnos);
             
+            // Limpiar solo las notas que se registraron exitosamente
+            setNotasTemporales(prev => {
+                const nuevasNotas = { ...prev };
+                resultados.forEach(r => {
+                    delete nuevasNotas[r.cedulaAlumno];
+                });
+                return nuevasNotas;
+            });
+
         } catch (err) {
             setError(err.message);
         } finally {
@@ -184,27 +154,16 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         }
     };
 
-    // Actualizar perfil del profesor
     const actualizarPerfil = async () => {
         setLoading(true);
         setError(null);
         try {
-            const response = await fetch('/api/actualizarProfesor', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({
-                    cedula: profesor.cedula,
-                    nombre: editData.nombre,
-                    telefono: editData.telefono,
-                    email: editData.email
-                })
+            await actualizarPerfilProfesor({
+                cedula: profesor.cedula,
+                nombre: editData.nombre,
+                telefono: editData.telefono,
+                email: editData.email
             });
-            
-            if (!response.ok) {
-                throw new Error('Error al actualizar perfil');
-            }
             
             setProfesor(prev => ({
                 ...prev,
@@ -213,7 +172,6 @@ const ProfesorDashboard = ({ user, onLogout }) => {
                 email: editData.email
             }));
             setEditMode(false);
-            
         } catch (err) {
             setError(err.message);
         } finally {
@@ -221,7 +179,6 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         }
     };
 
-    // Renderizar contenido según la pestaña activa
     const renderContent = () => {
         switch (activeTab) {
             case 'grupos':

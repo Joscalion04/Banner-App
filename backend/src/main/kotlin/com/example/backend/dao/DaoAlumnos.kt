@@ -14,9 +14,17 @@ class DaoAlumnos : Dao() {
         try {
             conectar()
         } catch (e: ClassNotFoundException) {
-            throw GlobalException("No se ha localizado el driver")
+            println("ERROR DE DRIVER: ${e.message}")
+            e.printStackTrace()
+            throw GlobalException("No se ha localizado el driver: ${e.message}")
         } catch (e: SQLException) {
-            throw NoDataException("La base de datos no se encuentra disponible")
+            println("ERROR DE SQL - Código: ${e.errorCode}, Estado: ${e.sqlState}, Mensaje: ${e.message}")
+            e.printStackTrace()
+            throw NoDataException("Error al conectar con la base de datos: ${e.message}")
+        } catch (e: Exception) {
+            println("ERROR INESPERADO: ${e.javaClass.name} - ${e.message}")
+            e.printStackTrace()
+            throw NoDataException("Error inesperado al conectar: ${e.message}")
         }
     }
 
