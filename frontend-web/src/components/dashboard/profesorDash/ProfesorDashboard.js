@@ -104,55 +104,56 @@ const ProfesorDashboard = ({ user, onLogout }) => {
         }
     }, [selectedGrupoId]);
 
-    const handleNotaChange = (cedulaAlumno, nota) => {
+const handleNotaChange = (cedulaAlumno, nota) => {
+    // Solo actualizamos si el valor es válido (entre 0 y 100)
+    if (nota === '' || (parseInt(nota) >= 0 && parseInt(nota) <= 100)) {
         setNotasTemporales(prev => ({
             ...prev,
-            [cedulaAlumno]: nota
+            [cedulaAlumno]: nota === '' ? '' : parseInt(nota)
         }));
-    };
+    }
+};
 
-    const registrarNotas = async () => {
-        setLoading(true);
-        setError(null);
-        
-        try {
-            const { resultados, errores } = await registrarNotasAlumnos({
-                grupoId: selectedGrupoId,
-                notasTemporales
-            });
+const registrarNotas = async () => {
+    setLoading(true);
+    setError(null);
+    
+    try {
+        // Filtramos notas vacías
+        const notasParaEnviar = Object.fromEntries(
+            Object.entries(notasTemporales)
+                .filter(([_, nota]) => nota !== '')
+        );
 
-            // Mostrar resultados
-            if (errores.length > 0) {
-                const mensajeError = errores.map(e => 
-                    `Alumno ${e.cedulaAlumno}: ${e.message}`
-                ).join('\n');
-                
-                setError(`Algunas notas no se registraron:\n${mensajeError}`);
-            } else {
-                // Mostrar mensaje de éxito
-                setError('Todas las notas se registraron correctamente');
-                setTimeout(() => setError(null), 3000);
-            }
+        const { errores } = await registrarNotasAlumnos({
+            grupoId: selectedGrupoId,
+            notasTemporales: notasParaEnviar
+        });
 
-            // Actualizar la lista de alumnos después de registrar las notas
+        if (errores.length > 0) {
+            const mensajeError = errores.map(e => 
+                `Alumno ${e.cedulaAlumno}: ${e.message}`
+            ).join('\n');
+            
+            setError(`Algunas notas no se registraron:\n${mensajeError}`);
+        } else {
+            setError('Todas las notas se registraron correctamente');
+            setTimeout(() => setError(null), 3000);
+            
+            // Limpiar todas las notas temporales
+            setNotasTemporales({});
+            
+            // Actualizar la lista de alumnos
             const alumnos = await obtenerAlumnosMatriculados(selectedGrupoId);
             setAlumnosMatriculados(alumnos);
-            
-            // Limpiar solo las notas que se registraron exitosamente
-            setNotasTemporales(prev => {
-                const nuevasNotas = { ...prev };
-                resultados.forEach(r => {
-                    delete nuevasNotas[r.cedulaAlumno];
-                });
-                return nuevasNotas;
-            });
-
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLoading(false);
         }
-    };
+
+    } catch (err) {
+        setError(err.message || 'Error al registrar las notas');
+    } finally {
+        setLoading(false);
+    }
+};
 
     const actualizarPerfil = async () => {
         setLoading(true);
@@ -221,47 +222,47 @@ const ProfesorDashboard = ({ user, onLogout }) => {
                                 ))}
                             </select>
                         </div>
-                        
-                        {selectedGrupoId && (
-                            <div className={styles.calificacionesTable}>
-                                <table>
-                                    <thead>
-                                        <tr>
-                                            <th>Nombre</th>
-                                            <th>Cédula</th>
-                                            <th>Nota Actual</th>
-                                            <th>Nueva Nota</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        {alumnosMatriculados.map(alumno => (
-                                            <tr key={alumno.cedulaAlumno}>
-                                                <td>{alumno.nombre}</td>
-                                                <td>{alumno.cedulaAlumno}</td>
-                                                <td>{alumno.nota || 'Sin registrar'}</td>
-                                                <td>
-                                                    <input
-                                                        type="number"
-                                                        min="0"
-                                                        max="100"
-                                                        value={notasTemporales[alumno.cedulaAlumno] || ''}
-                                                        onChange={(e) => handleNotaChange(alumno.cedulaAlumno, e.target.value)}
-                                                    />
-                                                </td>
-                                            </tr>
-                                        ))}
-                                    </tbody>
-                                </table>
-                                
-                                <button 
-                                    onClick={registrarNotas}
-                                    className={styles.primaryButton}
-                                    disabled={Object.keys(notasTemporales).length === 0}
-                                >
-                                    Guardar Notas
-                                </button>
-                            </div>
-                        )}
+{selectedGrupoId && (
+    <div className={styles.calificacionesTable}>
+        <table>
+            <thead>
+                <tr>
+                    <th>Nombre</th>
+                    <th>Cédula</th>
+                    <th>Nota Actual</th>
+                    <th>Nueva Nota</th>
+                </tr>
+            </thead>
+            <tbody>
+                {alumnosMatriculados.map(alumno => (
+                    <tr key={alumno.cedulaAlumno}>
+                        <td>{alumno.nombre}</td>
+                        <td>{alumno.cedulaAlumno}</td>
+                        <td>{alumno.nota || 'Sin registrar'}</td>
+                        <td>
+                            <input
+                                type="number"
+                                min="0"
+                                max="100"
+                                value={notasTemporales[alumno.cedulaAlumno] ?? ''}
+                                onChange={(e) => handleNotaChange(alumno.cedulaAlumno, e.target.value)}
+                                className={styles.notaInput}
+                            />
+                        </td>
+                    </tr>
+                ))}
+            </tbody>
+        </table>
+        
+        <button 
+            onClick={registrarNotas}
+            className={styles.primaryButton}
+            disabled={Object.keys(notasTemporales).length === 0 || loading}
+        >
+            {loading ? 'Guardando...' : 'Guardar Notas'}
+        </button>
+    </div>
+)}
                     </div>
                 );
                 
