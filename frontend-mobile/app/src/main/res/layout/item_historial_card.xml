@@ -28,7 +28,7 @@
             android:layout_marginBottom="6dp"
             android:drawableStart="@android:drawable/ic_menu_agenda"
             android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
+            android:drawableTint="#A2261D"/>
 
         <!-- Cycle -->
         <TextView
@@ -41,7 +41,7 @@
             android:layout_marginBottom="6dp"
             android:drawableStart="@android:drawable/ic_menu_month"
             android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
+            android:drawableTint="#A2261D"/>
 
         <!-- Course -->
         <TextView
@@ -54,7 +54,7 @@
             android:layout_marginBottom="6dp"
             android:drawableStart="@android:drawable/ic_menu_edit"
             android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
+            android:drawableTint="#A2261D"/>
 
         <!-- Group -->
         <TextView
@@ -66,7 +66,7 @@
             android:textColor="#424242"
             android:drawableStart="@android:drawable/ic_menu_my_calendar"
             android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
+            android:drawableTint="#A2261D"/>
 
         <!-- Group -->
         <TextView
@@ -78,7 +78,7 @@
             android:textColor="#424242"
             android:drawableStart="@android:drawable/ic_dialog_info"
             android:drawablePadding="8dp"
-            android:drawableTint="#6200EE"/>
+            android:drawableTint="#C31B0F"/>
 
     </LinearLayout>
 </androidx.cardview.widget.CardView>

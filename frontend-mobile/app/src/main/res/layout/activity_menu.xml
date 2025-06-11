@@ -6,36 +6,35 @@
     android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="#FFFFFF"
+    android:background="@drawable/background_gradient"
     tools:context=".MainActivity"
     tools:openDrawer="start">
 
-    <!-- Contenido principal -->
-    <LinearLayout
+    <!-- Contenido principal con el mismo fondo -->
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="40sp"
-        android:orientation="vertical"
-        android:background="#FFFFFF">
+        android:background="@drawable/background_gradient">
 
         <FrameLayout
             android:id="@+id/fragment_container"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
-    </LinearLayout>
+            android:layout_height="match_parent"
+            android:background="#AAF87C7C"/> <!-- Fondo semi-transparente para contenido -->
 
-    <!-- NavigationView CORREGIDO -->
+    </RelativeLayout>
+
+    <!-- NavigationView -->
     <com.google.android.material.navigation.NavigationView
         android:id="@+id/nav_view"
         android:layout_width="280dp"
         android:layout_height="match_parent"
         android:layout_gravity="start"
-        android:background="#FFFFFF"
-        android:elevation="10dp"
-        android:outlineSpotShadowColor="#6200EE"
-        app:itemTextColor="#212121"
-        app:itemIconTint="#6200EE"
-        app:itemBackground="?android:attr/selectableItemBackground"
+        android:background="@color/nav_background"
+        android:elevation="16dp"
+        app:itemTextColor="@color/nav_text_default"
+        app:itemIconTint="@color/nav_icon_default"
+        app:itemBackground="@drawable/nav_item_background"
         app:headerLayout="@layout/nav_header"
         app:menu="@menu/navigation_menu">
 
@@ -44,7 +43,7 @@
             android:layout_width="1dp"
             android:layout_height="match_parent"
             android:layout_gravity="end"
-            android:background="#E0E0E0" />
+            android:background="@color/red_primary"/>
     </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

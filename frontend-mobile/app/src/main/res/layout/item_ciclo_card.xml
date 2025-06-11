@@ -31,7 +31,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/anio_ciclo"
-            android:textColor="#6200EE"
+            android:textColor="#BF190D"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="4dp"/>
@@ -83,7 +83,7 @@
             android:text="@string/ciclo_activo"
             android:textColor="#212121"
             android:textSize="14sp"
-            android:buttonTint="#6200EE"
+            android:buttonTint="#7E120A"
             android:paddingTop="8dp"
             android:paddingBottom="8dp"
             android:focusable="false"

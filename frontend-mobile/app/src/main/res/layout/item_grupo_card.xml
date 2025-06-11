@@ -24,7 +24,7 @@
             android:text="Grupo 1"
             android:textSize="18sp"
             android:textStyle="bold"
-            android:textColor="#6200EE"
+            android:textColor="#99231B"
             android:layout_marginBottom="6dp"/>
 
         <!-- Schedule -->
