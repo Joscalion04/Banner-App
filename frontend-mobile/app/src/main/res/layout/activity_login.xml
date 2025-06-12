@@ -11,14 +11,9 @@
     android:paddingRight="@dimen/activity_horizontal_margin"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:background="@android:color/white"
-    android:elevation="4dp"
-    android:outlineSpotShadowColor="#6200EE33"
     tools:context=".ui.login.LoginActivity">
 
     <!-- Logo centrado verticalmente -->
-
-    <!-- Campo de usuario -->
-
     <ImageView
         android:id="@+id/logo"
         android:layout_width="120dp"
@@ -30,8 +25,10 @@
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_chainStyle="packed" />
+        app:layout_constraintVertical_chainStyle="packed"
+        app:tint="@color/red_primary" />
 
+    <!-- Campo de usuario -->
     <EditText
         android:id="@+id/username"
         android:layout_width="0dp"
@@ -42,10 +39,12 @@
         android:hint="@string/prompt_username"
         android:inputType="textEmailAddress"
         android:selectAllOnFocus="true"
-        android:background="@android:drawable/edit_text"
-        android:textColorHint="#80000000"
+        android:background="@drawable/edit_text_red_style"
+        android:textColorHint="@color/nav_icon_default"
+        android:textColor="@color/black"
         android:paddingStart="16dp"
         android:drawableStart="@android:drawable/ic_dialog_email"
+        android:drawableTint="@color/red_primary"
         android:drawablePadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -66,16 +65,19 @@
         android:imeOptions="actionDone"
         android:inputType="textPassword"
         android:selectAllOnFocus="true"
-        android:background="@android:drawable/edit_text"
-        android:textColorHint="#80000000"
+        android:background="@drawable/edit_text_red_style"
+        android:textColorHint="@color/nav_icon_default"
+        android:textColor="@color/black"
         android:paddingStart="16dp"
         android:drawableStart="@android:drawable/ic_lock_lock"
+        android:drawableTint="@color/red_primary"
         android:drawablePadding="8dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/username"
         app:layout_constraintBottom_toTopOf="@+id/login" />
 
+    <!-- Botón de Login (manteniendo estructura original) -->
     <Button
         android:id="@+id/login"
         android:layout_width="0dp"
@@ -85,8 +87,8 @@
         android:layout_marginEnd="24dp"
         android:enabled="false"
         android:text="@string/action_sign_in_short"
-        android:backgroundTint="#6200EE"
-        android:textColor="@android:color/white"
+        android:backgroundTint="@color/red_primary"
+        android:textColor="@color/white"
         android:textAllCaps="false"
         android:elevation="2dp"
         app:layout_constraintStart_toStartOf="parent"
@@ -95,50 +97,13 @@
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintVertical_bias="0.3" />
 
-<!--    <Button-->
-<!--        android:id="@+id/login"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="48dp"-->
-<!--        android:layout_marginStart="24dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:layout_marginEnd="8dp"-->
-<!--        android:enabled="false"-->
-<!--        android:text="@string/action_sign_in_short"-->
-<!--        android:backgroundTint="#6200EE"-->
-<!--        android:textColor="@android:color/white"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:elevation="2dp"-->
-<!--        app:layout_constraintEnd_toStartOf="@+id/register"-->
-<!--        app:layout_constraintStart_toStartOf="parent"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/password"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintVertical_bias="0.3" />-->
-
-<!--    <Button-->
-<!--        android:id="@+id/register"-->
-<!--        android:layout_width="0dp"-->
-<!--        android:layout_height="48dp"-->
-<!--        android:layout_marginStart="8dp"-->
-<!--        android:layout_marginTop="24dp"-->
-<!--        android:layout_marginEnd="24dp"-->
-<!--        android:backgroundTint="#03DAC6"-->
-<!--        android:elevation="2dp"-->
-<!--        android:enabled="true"-->
-<!--        android:text="@string/action_register"-->
-<!--        android:textAllCaps="false"-->
-<!--        android:textColor="@android:color/white"-->
-<!--        app:layout_constraintBottom_toBottomOf="parent"-->
-<!--        app:layout_constraintEnd_toEndOf="parent"-->
-<!--        app:layout_constraintStart_toEndOf="@+id/login"-->
-<!--        app:layout_constraintTop_toBottomOf="@+id/password"-->
-<!--        app:layout_constraintVertical_bias="0.0" />-->
-
+    <!-- ProgressBar -->
     <ProgressBar
         android:id="@+id/loading"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:visibility="gone"
-        android:indeterminateTint="#6200EE"
+        android:indeterminateTint="@color/red_primary"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

@@ -22,7 +22,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/nombre_del_curso_item"
-            android:textColor="#6200EE"
+            android:textColor="#81130A"
             android:textSize="16sp"
             android:textStyle="bold"
             android:layout_marginBottom="4dp"/>

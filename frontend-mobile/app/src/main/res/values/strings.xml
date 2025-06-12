@@ -13,7 +13,7 @@
     <string name="invalid_password">Digite una contraseña</string>
     <string name="login_failed">"Credenciales Incorrectas"</string>
     <string name="title_activity_register">Register</string>
-
+    <string name="app_logo">Logo UNA</string>
 
     <!-- to toggle the open close button of the navigation drawer -->
     <string name="nav_open">Open</string>
