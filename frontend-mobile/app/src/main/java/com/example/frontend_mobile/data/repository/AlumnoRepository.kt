@@ -1,146 +1,72 @@
 package com.example.frontend_mobile.data.repository
 
-import android.os.Build
-import androidx.annotation.RequiresApi
-import com.example.frontend_mobile.data.LocalDateAdapter
+import android.content.Context
+import com.example.frontend_mobile.data.AppDatabase
+import com.example.frontend_mobile.data.dao.AlumnoDao
+import com.example.frontend_mobile.data.dao.CarreraDao
+import com.example.frontend_mobile.data.dao.UsuarioDao
 import com.example.frontend_mobile.data.model.Alumno
-import com.google.gson.Gson
-import com.google.gson.GsonBuilder
-import com.google.gson.reflect.TypeToken
+import com.example.frontend_mobile.data.model.Usuario
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
-import java.time.LocalDate
 import kotlin.collections.forEach
 
 
 object AlumnoRepository {
-    private const val BASE_URL = "http://10.0.2.2:8080/api"
-    @RequiresApi(Build.VERSION_CODES.O)
-    val gson: Gson = GsonBuilder()
-        .registerTypeAdapter(LocalDate::class.java, LocalDateAdapter())
-        .create()
+    private lateinit var alumnoDao: AlumnoDao
+    private lateinit var usuarioDao: UsuarioDao
+    private lateinit var carreraDao: CarreraDao
 
-    @RequiresApi(Build.VERSION_CODES.O)
+    fun init(context: Context) {
+        val db = AppDatabase.getDatabase(context)
+        alumnoDao = db.alumnoDao()
+        usuarioDao = db.usuarioDao()
+        carreraDao = db.carreraDao()
+    }
+
     suspend fun agregarAlumno(alumno: Alumno): Boolean = withContext(Dispatchers.IO) {
-        val url = URL("${BASE_URL}/insertarAlumno")
-        val conn = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "POST"
-        conn.doOutput = true
-        conn.setRequestProperty("Content-Type", "application/json")
-        conn.setRequestProperty("Accept", "application/json")
-
-        try {
-            // Convertir el alumno a JSON (usamos Gson)
-            val jsonAlumno = gson.toJson(alumno)
-
-            // Enviar JSON
-            conn.outputStream.use { os ->
-                os.write(jsonAlumno.toByteArray(Charsets.UTF_8))
+        return@withContext try {
+            if (carreraDao.obtenerCarreras().find { carrera -> carrera.codigoCarrera == alumno.codigoCarrera } == null) {
+                throw IllegalArgumentException("Carrera no encontrada: ${alumno.codigoCarrera}")
             }
-
-            val responseCode = conn.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                true
-            } else {
-                val error =
-                    conn.errorStream?.bufferedReader()?.use { it.readText() } ?: "Error desconocido"
-                println("Error al agregar alumno ($responseCode): $error")
-                false
-            }
+            alumnoDao.insertarAlumno(alumno)
+            usuarioDao.insertarUsuario(Usuario(alumno.cedula, alumno.cedula, "ALUMNO"))
+            true
         } catch (e: Exception) {
-            println("Error en la conexión al agregar alumno: ${e.message}")
-            false
-        } finally {
-            conn.disconnect()
+            throw e
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun listarAlumnos(): List<Alumno> = withContext(Dispatchers.IO) {
-        val url = URL("${BASE_URL}/obtenerAlumnos")
-        val conn = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "GET"
-        conn.setRequestProperty("Accept", "application/json")
-
-        try {
-            val responseCode = conn.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                val response = conn.inputStream.bufferedReader().use { it.readText() }
-                // Convertimos el JSON en lista de alumnos con Gson
-                val tipoLista = object : TypeToken<List<Alumno>>() {}.type
-                gson.fromJson<List<Alumno>>(response, tipoLista)
-            } else {
-                val error =
-                    conn.errorStream?.bufferedReader()?.use { it.readText() } ?: "Error desconocido"
-                println("Error al obtener alumnos ($responseCode): $error")
-                emptyList()
-            }
+        return@withContext try {
+            alumnoDao.obtenerAlumnos()
         } catch (e: Exception) {
-            println("Error en la conexión al obtener alumnos: ${e.message}")
+            println("Error al listar alumnos: ${e.message}")
             emptyList()
-        } finally {
-            conn.disconnect()
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun setAlumnos(alumnos: List<Alumno>): Boolean = withContext(Dispatchers.IO) {
-        try {
-            alumnos.forEach { alumno ->
-                val url = URL("${BASE_URL}/actualizarAlumno")
-                val conn = url.openConnection() as HttpURLConnection
-                conn.requestMethod = "POST"
-                conn.doOutput = true
-                conn.setRequestProperty("Content-Type", "application/json")
-                conn.setRequestProperty("Accept", "application/json")
-
-                val jsonAlumno = gson.toJson(alumno)
-
-                conn.outputStream.use { os ->
-                    os.write(jsonAlumno.toByteArray(Charsets.UTF_8))
+        return@withContext try {
+            alumnos.forEach {
+                if (carreraDao.obtenerCarreras().find { carrera -> carrera.codigoCarrera == it.codigoCarrera } == null) {
+                    throw IllegalArgumentException("Carrera no encontrada: ${it.codigoCarrera}")
                 }
-
-                val responseCode = conn.responseCode
-                if (responseCode != HttpURLConnection.HTTP_OK) {
-                    val error = conn.errorStream?.bufferedReader()?.use { it.readText() }
-                        ?: "Error desconocido"
-                    println("Error al actualizar alumno ${alumno.cedula} ($responseCode): $error")
-                    conn.disconnect()
-                    return@withContext false // falla la actualización
-                }
-                conn.disconnect()
+                alumnoDao.actualizarAlumno(it)
             }
-            true // todos actualizados con éxito
+            true
         } catch (e: Exception) {
-            println("Error en la conexión al actualizar alumnos: ${e.message}")
-            false
+            throw e
         }
     }
 
-    @RequiresApi(Build.VERSION_CODES.O)
     suspend fun eliminarAlumno(alumno: Alumno): Boolean = withContext(Dispatchers.IO) {
-        val url = URL("${BASE_URL}/eliminarAlumno/${alumno.cedula}")
-        val conn = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "DELETE"
-        conn.setRequestProperty("Accept", "application/json")
-
-        try {
-            val responseCode = conn.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                true
-            } else {
-                val error =
-                    conn.errorStream?.bufferedReader()?.use { it.readText() } ?: "Error desconocido"
-                println("Error al eliminar alumno ${alumno.cedula} ($responseCode): $error")
-                false
-            }
+        return@withContext try {
+            alumnoDao.eliminarAlumno(alumno)
+            true
         } catch (e: Exception) {
-            println("Error en la conexión al eliminar alumno: ${e.message}")
+            println("Error al eliminar alumno: ${e.message}")
             false
-        } finally {
-            conn.disconnect()
         }
     }
 }

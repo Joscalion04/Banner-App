@@ -1,120 +1,47 @@
 package com.example.frontend_mobile.data.repository
 
-import com.example.frontend_mobile.data.model.MatriculaRequest
-import com.example.frontend_mobile.data.model.NotaRequest
-import com.google.gson.Gson
-import com.google.gson.reflect.TypeToken
+import android.content.Context
+import com.example.frontend_mobile.data.AppDatabase
+import com.example.frontend_mobile.data.dao.MatriculaDao
+import com.example.frontend_mobile.data.model.Matricula
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import java.net.HttpURLConnection
-import java.net.URL
-import kotlin.collections.forEach
 
 object MatriculaRepository {
-    private const val BASE_URL = "http://10.0.2.2:8080/api"
-    private val gson = Gson()
+    private lateinit var matriculaDao: MatriculaDao
 
-    class MatriculaException(message: String) : Exception(message)
+    fun init(context: Context) {
+        val db = AppDatabase.getDatabase(context)
+        matriculaDao = db.matriculaDao()
+    }
 
-    suspend fun agregarMatricula(matricula: MatriculaRequest): Boolean = withContext(Dispatchers.IO) {
-        val url = URL("$BASE_URL/registrarMatricula")
-        val conn = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "POST"
-        conn.doOutput = true
-        conn.setRequestProperty("Content-Type", "application/json")
-        conn.setRequestProperty("Accept", "application/json")
-
-        try {
-            // Convertir el matricula a JSON (usamos Gson)
-            val jsonMatricula = gson.toJson(matricula)
-            
-            // Enviar JSON
-            conn.outputStream.use { os ->
-                os.write(jsonMatricula.toByteArray(Charsets.UTF_8))
-            }
-
-            val responseCode = conn.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                true
-            } else {
-                val error = conn.errorStream
-                    ?.bufferedReader()
-                    ?.use { it.readText() }
-                    ?: "Error desconocido"
-                throw MatriculaException(error)
-            }
+    suspend fun agregarMatricula(matricula: Matricula): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            matriculaDao.insertarMatricula(matricula)
+            true
         } catch (e: Exception) {
-            throw MatriculaException(e.message.toString())
-        } finally {
-            conn.disconnect()
+            println("Error al agregar matricula: ${e.message}")
+            false
         }
     }
 
-    suspend fun registrarNota(notaRequest: NotaRequest): Boolean = withContext(Dispatchers.IO) {
-        val url = URL("$BASE_URL/registrarNota")
-        val conn = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "POST"
-        conn.doOutput = true
-        conn.setRequestProperty("Content-Type", "application/json")
-        conn.setRequestProperty("Accept", "application/json")
-
-        try {
-            // Convertir el notaRequest a JSON (usamos Gson)
-            val jsonNota = gson.toJson(notaRequest)
-
-            // Enviar JSON
-            conn.outputStream.use { os ->
-                os.write(jsonNota.toByteArray(Charsets.UTF_8))
-            }
-
-            val responseCode = conn.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                true
-            } else {
-                val error = conn.errorStream
-                    ?.bufferedReader()
-                    ?.use { it.readText() }
-                    ?: "Error desconocido"
-                throw MatriculaException("Error $responseCode: $error")
-            }
+    suspend fun registrarNota(matricula: Matricula): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            matriculaDao.actualizarMatricula(matricula)
+            true
         } catch (e: Exception) {
-            throw MatriculaException("Error de conexión: ${e.message}")
-        } finally {
-            conn.disconnect()
+            println("Error al actualizar matricula: ${e.message}")
+            false
         }
     }
 
-    suspend fun eliminarMatricula(matricula: MatriculaRequest): Boolean = withContext(Dispatchers.IO) {
-        val url = URL("$BASE_URL/eliminarMatricula")
-        val conn = url.openConnection() as HttpURLConnection
-        conn.requestMethod = "DELETE"
-        conn.doOutput = true
-        conn.setRequestProperty("Content-Type", "application/json")
-        conn.setRequestProperty("Accept", "application/json")
-
-        try {
-            // Convertir el matricula a JSON (usamos Gson)
-            val jsonMatricula = gson.toJson(matricula)
-
-            // Enviar JSON
-            conn.outputStream.use { os ->
-                os.write(jsonMatricula.toByteArray(Charsets.UTF_8))
-            }
-
-            val responseCode = conn.responseCode
-            if (responseCode == HttpURLConnection.HTTP_OK) {
-                true
-            } else {
-                val error = conn.errorStream
-                    ?.bufferedReader()
-                    ?.use { it.readText() }
-                    ?: "Error desconocido"
-                throw MatriculaException("Error $responseCode: $error")
-            }
+    suspend fun eliminarMatricula(matricula: Matricula): Boolean = withContext(Dispatchers.IO) {
+        return@withContext try {
+            matriculaDao.eliminarMatricula(matricula)
+            true
         } catch (e: Exception) {
-            throw MatriculaException("Error de conexión: ${e.message}")
-        } finally {
-            conn.disconnect()
+            println("Error al eliminar matricula: ${e.message}")
+            false
         }
     }
 

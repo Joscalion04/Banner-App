@@ -32,6 +32,7 @@ class ProfesorFragment : Fragment(), ProfesorAdapter.OnProfesorClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentProfesoresBinding.inflate(inflater, container, false)
+        profesorRepository.init(requireContext().applicationContext)
         return binding.root
     }
 

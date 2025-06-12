@@ -32,6 +32,7 @@ class CarreraFragment : Fragment(), CarreraAdapter.OnCarreraClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCarrerasBinding.inflate(inflater, container, false)
+        carreraRepository.init(requireContext().applicationContext)
         return binding.root
     }
 

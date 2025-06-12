@@ -1,15 +1,10 @@
 package com.example.frontend_mobile.ui.grupos
 
-import android.os.Build
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.model.HistorialItem
-import com.example.frontend_mobile.data.repository.AlumnoRepository
-import com.example.frontend_mobile.databinding.ItemHistorialCardBinding
 import com.example.frontend_mobile.databinding.ItemNotasCardBinding
-import com.example.frontend_mobile.ui.alumnos.MatriculaAdapter.OnMatriculaClickListener
 
 class NotasAdapter(
     private var listaHistorial: MutableList<HistorialItem>,

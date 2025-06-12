@@ -42,6 +42,10 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCursosBinding.inflate(inflater, container, false)
+        cursoRepository.init(requireContext().applicationContext)
+        carreraRepository.init(requireContext().applicationContext)
+        cicloRepository.init(requireContext().applicationContext)
+        carrerasCursosRepository.init(requireContext().applicationContext)
         return binding.root
     }
 
@@ -49,7 +53,7 @@ class CursoFragment : Fragment(), CursoAdapter.OnCursoClickListener {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        adapter = CursoAdapter(mutableListOf(), this, cursoRepository)
+        adapter = CursoAdapter(mutableListOf(), this, cursoRepository, carreraRepository, cicloRepository, carrerasCursosRepository)
         binding.recyclerViewCursos.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewCursos.adapter = adapter
 

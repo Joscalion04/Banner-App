@@ -1,7 +1,11 @@
 package com.example.frontend_mobile.data.model
 
+import androidx.room.Entity
+import androidx.room.PrimaryKey
+
+@Entity(tableName = "grupos")
 data class Grupo(
-    val grupoId: Int,
+    @PrimaryKey(autoGenerate = true) val grupoId: Int,
     val cicloId: Int?,
     val codigoCurso: String,
     val numeroGrupo: Int,

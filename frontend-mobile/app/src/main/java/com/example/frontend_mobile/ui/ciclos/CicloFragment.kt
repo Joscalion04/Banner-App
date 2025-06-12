@@ -37,6 +37,7 @@ class CicloFragment : Fragment(), CicloAdapter.OnCicloClickListener {
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentCiclosBinding.inflate(inflater, container, false)
+        cicloRepository.init(requireContext().applicationContext)
         return binding.root
     }
 
@@ -237,7 +238,7 @@ class CicloFragment : Fragment(), CicloAdapter.OnCicloClickListener {
                         }
                         cicloRepository.setCiclos(ciclosActualizados)
                         withContext(Dispatchers.Main) {
-                            adapter.actualizarLista(ciclosActualizados.toMutableList())
+                            adapter.actualizarLista(cicloRepository.listarCiclos().toMutableList())
                             Toast.makeText(
                                 requireContext(),
                                 "Ciclo actualizado",

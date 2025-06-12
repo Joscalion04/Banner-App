@@ -2,6 +2,7 @@ plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
     alias(libs.plugins.kotlin.compose)
+    id("kotlin-kapt")
 }
 
 android {
@@ -41,7 +42,6 @@ android {
 }
 
 dependencies {
-//    implementation(libs.material.v130alpha03)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.lifecycle.runtime.ktx)
     implementation(libs.androidx.activity.compose)
@@ -57,6 +57,8 @@ dependencies {
     implementation(libs.androidx.lifecycle.livedata.ktx)
     implementation(libs.androidx.lifecycle.viewmodel.ktx)
     implementation(libs.androidx.core.ktx)
+    implementation(libs.androidx.room.common.jvm)
+    implementation(libs.androidx.room.runtime.android)
     testImplementation(libs.junit)
     androidTestImplementation(libs.androidx.junit)
     androidTestImplementation(libs.androidx.espresso.core)
@@ -68,4 +70,8 @@ dependencies {
     implementation(libs.json)
     implementation(libs.gson)
     implementation(libs.kotlinx.coroutines.android)
+    implementation(libs.roomRuntime)
+    implementation(libs.roomCommon)
+    kapt(libs.roomCompiler)
+    implementation(libs.androidx.recyclerview)
 }

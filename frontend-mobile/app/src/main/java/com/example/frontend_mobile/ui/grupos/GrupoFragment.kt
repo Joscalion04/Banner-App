@@ -25,6 +25,7 @@ import com.example.frontend_mobile.data.model.Curso
 import com.example.frontend_mobile.data.model.Grupo
 import com.example.frontend_mobile.data.model.CarreraCurso
 import com.example.frontend_mobile.data.model.HistorialItem
+import com.example.frontend_mobile.data.model.Matricula
 import com.example.frontend_mobile.data.model.NotaRequest
 import com.example.frontend_mobile.data.repository.CarreraRepository
 import com.example.frontend_mobile.data.repository.CicloRepository
@@ -56,6 +57,7 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
     private val grupoRepository = GrupoRepository
     private val matriculaRepository = MatriculaRepository
     private val carreraCursoRepository = CarreraCursoRepository
+    private val historialRepository = HistorialRepository
     private lateinit var adapter: GrupoAdapter
 
     private var listaCarreras: List<Carrera> = emptyList()
@@ -71,6 +73,13 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
         savedInstanceState: Bundle?
     ): View {
         binding = FragmentGruposBinding.inflate(inflater, container, false)
+        carreraRepository.init(requireContext().applicationContext)
+        cicloRepository.init(requireContext().applicationContext)
+        cursoRepository.init(requireContext().applicationContext)
+        grupoRepository.init(requireContext().applicationContext)
+        matriculaRepository.init(requireContext().applicationContext)
+        carreraCursoRepository.init(requireContext().applicationContext)
+        historialRepository.init(requireContext().applicationContext)
         return binding.root
     }
 
@@ -121,10 +130,8 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
 
             if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR" || SessionManager.user?.tipoUsuario == "ALUMNO") {
                 todosLosGrupos = grupoRepository.listarGrupos()
-                binding.fabAgregarGrupo.visibility = View.VISIBLE
             } else {
                 todosLosGrupos = grupoRepository.listarGrupos().filter { it.cedulaProfesor == SessionManager.user?.cedula }
-                binding.fabAgregarGrupo.visibility = View.GONE
             }
 
             withContext(Dispatchers.Main) {
@@ -187,7 +194,11 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
             ?.getItem(binding.spinnerCurso.selectedItemPosition)
 
         val habilitarFab = carreraSeleccionada != null && cicloSeleccionado != null && cursoSeleccionado != null
-        binding.fabAgregarGrupo.visibility = if (habilitarFab) View.VISIBLE else View.GONE
+        if (SessionManager.user?.tipoUsuario == "ADMINISTRADOR" && habilitarFab) {
+            binding.fabAgregarGrupo.visibility = View.VISIBLE
+        } else {
+            binding.fabAgregarGrupo.visibility = View.GONE
+        }
     }
 
     private fun actualizarCursos() {
@@ -336,19 +347,25 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
                         cedulaProfesor = cedulaProfesor
                     )
 
-                    val exito = if (grupo == null) {
-                        grupoRepository.agregarGrupoRemoto(nuevoGrupo)
-                    } else {
-                        grupoRepository.setGrupos(listOf(nuevoGrupo))
-                    }
-
-                    withContext(Dispatchers.Main) {
-                        if (exito) {
-                            Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
-                            cargarDatos()
-                            filtrarGrupos()
+                    try {
+                        val exito = if (grupo == null) {
+                            grupoRepository.agregarGrupoRemoto(nuevoGrupo)
                         } else {
-                            Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
+                            grupoRepository.setGrupos(listOf(nuevoGrupo))
+                        }
+
+                        withContext(Dispatchers.Main) {
+                            if (exito) {
+                                Toast.makeText(requireContext(), "Guardado correctamente", Toast.LENGTH_SHORT).show()
+                                cargarDatos()
+                                filtrarGrupos()
+                            } else {
+                                Toast.makeText(requireContext(), "Error al guardar", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    } catch (e: Exception) {
+                        withContext(Dispatchers.Main) {
+                            Toast.makeText(requireContext(), "Error: ${e.message}", Toast.LENGTH_SHORT).show()
                         }
                     }
                 }
@@ -373,7 +390,7 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
         // Cargar el historial del alumno
         lifecycleScope.launch {
             try {
-                val historial = HistorialRepository.obtenerMatriculasPorGrupo(grupo.grupoId)
+                val historial = historialRepository.obtenerMatriculasPorGrupo(grupo.grupoId)
                 withContext(Dispatchers.Main) {
                     if (historial.isNotEmpty()) {
                         notasAdapter.actualizarLista(historial)
@@ -435,16 +452,17 @@ class GrupoFragment : Fragment(), GrupoAdapter.OnGrupoClickListener,
             .setView(dialogBinding.root)
             .setPositiveButton("Guardar") { _, _ ->
                 val cedula = dialogBinding.tvCedulaAlumno.text.toString().trim()
-                val nota = dialogBinding.etNotaAlumno.text.toString().toInt()
+                val nota = dialogBinding.etNotaAlumno.text.toString().toDouble()
 
                 lifecycleScope.launch {
-                    matriculaRepository.registrarNota(NotaRequest(
+                    matriculaRepository.registrarNota(Matricula(
+                        historialItem.matriculaId,
                         historialItem.grupoId,
                         cedula,
                         nota
                     ))
                     withContext(Dispatchers.Main) {
-                        notasAdapter.actualizarLista(HistorialRepository.obtenerMatriculasPorGrupo(historialItem.grupoId))
+                        notasAdapter.actualizarLista(historialRepository.obtenerMatriculasPorGrupo(historialItem.grupoId))
                         Toast.makeText(
                             requireContext(),
                             "Nota actualizada",

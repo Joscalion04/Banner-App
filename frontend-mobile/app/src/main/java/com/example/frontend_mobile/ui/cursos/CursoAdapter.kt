@@ -24,7 +24,10 @@ import kotlinx.coroutines.withContext
 class CursoAdapter(
     internal var cursos: MutableList<Curso>,
     private val listener: OnCursoClickListener,
-    private val repo: CursoRepository
+    private val repo: CursoRepository,
+    private val carreraRepository: CarreraRepository,
+    private val cicloRepository: CicloRepository,
+    private val carrerasCursosRepository: CarreraCursoRepository
 ) : RecyclerView.Adapter<CursoAdapter.CursoViewHolder>() {
 
     var listaCarreras: List<Carrera> = emptyList()
@@ -98,10 +101,6 @@ class CursoAdapter(
     override fun onBindViewHolder(holder: CursoViewHolder, position: Int) {
         holder.bind(cursos[position])
     }
-
-    private val carreraRepository = CarreraRepository
-    private val cicloRepository = CicloRepository
-    private val carrerasCursosRepository = CarreraCursoRepository
 
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun actualizarLista(nueva: List<Curso>) {

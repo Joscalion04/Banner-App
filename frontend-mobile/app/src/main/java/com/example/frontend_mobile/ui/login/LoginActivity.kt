@@ -36,7 +36,7 @@ private lateinit var binding: ActivityLoginBinding
         val login = binding.login
         val loading = binding.loading
 
-        loginViewModel = ViewModelProvider(this, LoginViewModelFactory())
+        loginViewModel = ViewModelProvider(this, LoginViewModelFactory(applicationContext))
             .get(LoginViewModel::class.java)
 
         loginViewModel.loginFormState.observe(this@LoginActivity, Observer {

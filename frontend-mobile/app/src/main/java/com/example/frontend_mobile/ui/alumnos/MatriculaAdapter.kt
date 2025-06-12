@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.recyclerview.widget.RecyclerView
 import com.example.frontend_mobile.data.model.HistorialItem
-import com.example.frontend_mobile.data.model.MatriculaRequest
+import com.example.frontend_mobile.data.model.Matricula
 import com.example.frontend_mobile.data.repository.MatriculaRepository
 import com.example.frontend_mobile.databinding.ItemMatriculaCardBinding
 import kotlinx.coroutines.Dispatchers
@@ -59,7 +59,7 @@ class MatriculaAdapter(
     @RequiresApi(Build.VERSION_CODES.O)
     suspend fun eliminarMatricula(pos: Int): Boolean {
         val matricula = historial[pos]
-        val exito = matriculaRepository.eliminarMatricula(MatriculaRequest(matricula.grupoId, matricula.cedulaAlumno))  // suspend
+        val exito = matriculaRepository.eliminarMatricula(Matricula(matricula.matriculaId, matricula.grupoId, matricula.cedulaAlumno, 0.0))  // suspend
         if (exito) {
             historial.removeAt(pos)
             withContext(Dispatchers.Main) {

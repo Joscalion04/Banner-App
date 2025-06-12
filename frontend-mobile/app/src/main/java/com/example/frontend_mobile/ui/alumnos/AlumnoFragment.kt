@@ -20,13 +20,12 @@ import com.example.frontend_mobile.data.WebSocketManager
 import com.example.frontend_mobile.data.model.Alumno
 import com.example.frontend_mobile.data.model.Grupo
 import com.example.frontend_mobile.data.model.HistorialItem
-import com.example.frontend_mobile.data.model.MatriculaRequest
+import com.example.frontend_mobile.data.model.Matricula
 import com.example.frontend_mobile.data.repository.AlumnoRepository
 import com.example.frontend_mobile.data.repository.CicloRepository
 import com.example.frontend_mobile.data.repository.GrupoRepository
 import com.example.frontend_mobile.data.repository.HistorialRepository
 import com.example.frontend_mobile.data.repository.MatriculaRepository
-import com.example.frontend_mobile.data.repository.MatriculaRepository.MatriculaException
 import com.example.frontend_mobile.databinding.DialogAlumnoBinding
 import com.example.frontend_mobile.databinding.DialogHistorialBinding
 import com.example.frontend_mobile.databinding.DialogMatriculaBinding
@@ -44,6 +43,10 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
 
     private lateinit var binding: FragmentAlumnosBinding
     private val alumnoRepository = AlumnoRepository
+    private val matriculaRepository = MatriculaRepository
+    private val historialRepository = HistorialRepository
+    private val cicloRepository = CicloRepository
+    private val grupoRepository = GrupoRepository
     private lateinit var adapter: AlumnoAdapter
     private lateinit var matriculaAdapter: MatriculaAdapter
     private lateinit var matriculaBinding: DialogMatriculaBinding
@@ -54,6 +57,11 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
     ): View {
         binding = FragmentAlumnosBinding.inflate(inflater, container, false)
         matriculaBinding = DialogMatriculaBinding.inflate(inflater, container, false)
+        alumnoRepository.init(requireContext().applicationContext)
+        matriculaRepository.init(requireContext().applicationContext)
+        historialRepository.init(requireContext().applicationContext)
+        cicloRepository.init(requireContext().applicationContext)
+        grupoRepository.init(requireContext().applicationContext)
         return binding.root
     }
 
@@ -65,7 +73,7 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
         binding.recyclerViewAlumnos.layoutManager = LinearLayoutManager(requireContext())
         binding.recyclerViewAlumnos.adapter = adapter
 
-        matriculaAdapter = MatriculaAdapter(mutableListOf(), this, MatriculaRepository)
+        matriculaAdapter = MatriculaAdapter(mutableListOf(), this, matriculaRepository)
 
         cargarAlumnos()
 
@@ -286,9 +294,9 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
         // Cargar el historial del alumno
         lifecycleScope.launch {
             try {
-                val historial = HistorialRepository.obtenerHistorialAlumno(alumno.cedula).filter { historialItem ->
-                    val grupo = GrupoRepository.listarGrupos().find { it.grupoId == historialItem.grupoId }
-                    val ciclo = CicloRepository.listarCiclos().find { it.cicloId == grupo?.cicloId }
+                val historial = historialRepository.obtenerHistorialAlumno(alumno.cedula).filter { historialItem ->
+                    val grupo = grupoRepository.listarGrupos().find { it.grupoId == historialItem.grupoId }
+                    val ciclo = cicloRepository.listarCiclos().find { it.cicloId == grupo?.cicloId }
                     ciclo?.activo == true
                 }
                 withContext(Dispatchers.Main) {
@@ -339,7 +347,7 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
         // Cargar el historial del alumno
         lifecycleScope.launch {
             try {
-                val historial = HistorialRepository.obtenerHistorialAlumno(alumno.cedula)
+                val historial = historialRepository.obtenerHistorialAlumno(alumno.cedula)
                 withContext(Dispatchers.Main) {
                     if (historial.isNotEmpty()) {
                         historialAdapter.actualizarLista(historial)
@@ -422,14 +430,23 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
                                 codigoCarrera
                             ) else it
                         }
-                        alumnoRepository.setAlumnos(alumnosActualizados)
-                        withContext(Dispatchers.Main) {
-                            adapter.actualizarLista(alumnosActualizados.toMutableList())
-                            Toast.makeText(
-                                requireContext(),
-                                "Alumno actualizado",
-                                Toast.LENGTH_SHORT
-                            ).show()
+                        try {
+                            alumnoRepository.setAlumnos(alumnosActualizados)
+
+                            withContext(Dispatchers.Main) {
+                                adapter.actualizarLista(alumnosActualizados.toMutableList())
+                                Toast.makeText(
+                                    requireContext(),
+                                    "Alumno actualizado",
+                                    Toast.LENGTH_SHORT
+                                ).show()
+                            }
+                        } catch (e: Exception) {
+                            withContext(Dispatchers.Main) {
+                                Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT)
+                                    .show()
+                            }
+                            return@launch
                         }
                     }
                 }
@@ -454,15 +471,14 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
     @RequiresApi(Build.VERSION_CODES.O)
     private fun eliminarMatricula(matricula: HistorialItem) {
         lifecycleScope.launch {
-            val request = MatriculaRequest(matricula.grupoId, matricula.cedulaAlumno)
-            val exito = MatriculaRepository.eliminarMatricula(request)
+            val exito = matriculaRepository.eliminarMatricula(Matricula(matricula.matriculaId, matricula.grupoId, matricula.cedulaAlumno,  0.0))
 
             withContext(Dispatchers.Main) {
                 if (exito) {
                     Toast.makeText(requireContext(), "Matrícula eliminada", Toast.LENGTH_SHORT).show()
-                    val historial = HistorialRepository.obtenerHistorialAlumno(matricula.cedulaAlumno).filter { historialItem ->
-                        val grupo = GrupoRepository.listarGrupos().find { it.grupoId == historialItem.grupoId }
-                        val ciclo = CicloRepository.listarCiclos().find { it.cicloId == grupo?.cicloId }
+                    val historial = historialRepository.obtenerHistorialAlumno(matricula.cedulaAlumno).filter { historialItem ->
+                        val grupo = grupoRepository.listarGrupos().find { it.grupoId == historialItem.grupoId }
+                        val ciclo = cicloRepository.listarCiclos().find { it.cicloId == grupo?.cicloId }
                         ciclo?.activo == true
                     }
                     matriculaAdapter.actualizarLista(historial)
@@ -477,16 +493,15 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
     override fun onGrupoSelected(grupo: Grupo, alumno: Alumno) {
         lifecycleScope.launch {
             try {
-                val request = MatriculaRequest(grupo.grupoId, alumno.cedula)
-                val exito = MatriculaRepository.agregarMatricula(request)
+                val exito = matriculaRepository.agregarMatricula(Matricula(null, grupo.grupoId, alumno.cedula, 0.0))
 
                 withContext(Dispatchers.Main) {
                     if (exito) {
-                        val historial = HistorialRepository.obtenerHistorialAlumno(alumno.cedula)
+                        val historial = historialRepository.obtenerHistorialAlumno(alumno.cedula)
                             .filter { historialItem ->
-                                val grupo = GrupoRepository.listarGrupos()
+                                val grupo = grupoRepository.listarGrupos()
                                     .find { it.grupoId == historialItem.grupoId }
-                                val ciclo = CicloRepository.listarCiclos()
+                                val ciclo = cicloRepository.listarCiclos()
                                     .find { it.cicloId == grupo?.cicloId }
                                 ciclo?.activo == true
                             }
@@ -495,14 +510,6 @@ class AlumnoFragment : Fragment(), AlumnoAdapter.OnAlumnoClickListener,
                         Toast.makeText(requireContext(), "Error al matricular", Toast.LENGTH_SHORT)
                             .show()
                     }
-                }
-            } catch (e: MatriculaException) {
-                // Mostrar el mensaje que llegó dentro de la excepción
-                withContext(Dispatchers.Main) {
-                    Toast.makeText(requireContext(),
-                        e.message ?: "Error desconocido",
-                        Toast.LENGTH_LONG
-                    ).show()
                 }
             } catch (e: Exception) {
                 // En caso de otra excepción inesperada
